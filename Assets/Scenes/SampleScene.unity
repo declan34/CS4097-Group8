@@ -1679,6 +1679,7 @@ GameObject:
   - component: {fileID: 460360403}
   - component: {fileID: 460360402}
   - component: {fileID: 460360406}
+  - component: {fileID: 460360407}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1743,7 +1744,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 1
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -1776,13 +1777,29 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 460360401}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 633ac9fd78e6d744aa15d83331894642, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 17529439}
   piecesleft: {fileID: 497674833}
+--- !u!114 &460360407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460360401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebf2c21d3906fff4291780c945364e31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreText: {fileID: 17529439}
+  piecesLeftText: {fileID: 497674833}
+  score: 0
+  piecesLeft: 0
 --- !u!1 &462020459
 GameObject:
   m_ObjectHideFlags: 0
