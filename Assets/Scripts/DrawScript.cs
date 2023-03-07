@@ -63,15 +63,15 @@ public class DrawScript : MonoBehaviour
 
     void DealTiles()
     {
-        float xOffset = -7.5f;
-        int yOffset = -17;
+        float xOffset = -4.5f;
+        float yOffset = -9.5f;
         float zOffset = 0.01f;
         for(int i = 0; i < 7; i++)
         {
             GameObject newtile = Instantiate(tilePrefab, new Vector3(transform.position.x + xOffset, transform.position.y + yOffset, transform.position.z + zOffset), Quaternion.identity);
             newtile.name = bag[i];
 
-            xOffset = xOffset + 2.5f;
+            xOffset = xOffset + 1.5f;
         }
 
     }
