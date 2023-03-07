@@ -30,4 +30,8 @@ public class ScoreSystem : MonoBehaviour
     {
         score += points;
     }
+    public void subtractTiles(int drawtiles)
+    {
+        piecesLeft = piecesLeft - drawtiles;
+    }
 }
