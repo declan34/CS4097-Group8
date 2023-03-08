@@ -67,4 +67,8 @@ public class ScoreSystem : MonoBehaviour
     {
         piecesLeft = piecesLeft - drawtiles;
     }
+    public void addTiles(int returntiles)
+    {
+        piecesLeft = piecesLeft + returntiles;
+    }
 }
