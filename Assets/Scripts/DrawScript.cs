@@ -65,7 +65,7 @@ public class DrawScript : MonoBehaviour
     void DealTiles()
     {
         float xOffset = -4.5f;
-        float yOffset = -9.0f;
+        float yOffset = -9.5f;
         float zOffset = 0.01f;
         for(int i = 0; i < 7; i++)
         {
