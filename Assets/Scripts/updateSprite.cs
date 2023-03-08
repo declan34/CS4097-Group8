@@ -19,7 +19,7 @@ public class updateSprite : MonoBehaviour
         {
             if( this.name == s)
             {
-                tile_letter = drawscript.tiles[i];
+                //tile_letter = drawscript.tiles[i];
                 break;
             }
             i++;
@@ -31,6 +31,6 @@ public class updateSprite : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        spriteRenderer.sprite = tile_letter;
+        //spriteRenderer.sprite = tile_letter;
     }
 }

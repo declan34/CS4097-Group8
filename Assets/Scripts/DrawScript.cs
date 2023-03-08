@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class DrawScript : MonoBehaviour
 {
-    public Sprite[] tiles;
+	[SerializeField] private Canvas canvas;
+	public Sprite[] tiles;
     public GameObject tilePrefab;
     public static string[] tile_letters = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", 
         "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
@@ -64,12 +65,14 @@ public class DrawScript : MonoBehaviour
     void DealTiles()
     {
         float xOffset = -4.5f;
-        float yOffset = -9.5f;
+        float yOffset = -9.0f;
         float zOffset = 0.01f;
         for(int i = 0; i < 7; i++)
         {
             GameObject newtile = Instantiate(tilePrefab, new Vector3(transform.position.x + xOffset, transform.position.y + yOffset, transform.position.z + zOffset), Quaternion.identity);
             newtile.name = bag[i];
+            newtile.transform.parent = canvas.transform;
+            newtile.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
             xOffset = xOffset + 1.5f;
         }
