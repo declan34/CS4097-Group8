@@ -14,9 +14,9 @@ public class updateSprite : MonoBehaviour
     {
 		imageComponent = GetComponent<Image>();
 
-		int index = System.Array.IndexOf(GameManager.tile_letters, char.Parse(name));
-        Debug.Log(name);
-        Debug.Log(index);
+		int index = System.Array.IndexOf(GameManager.tile_letters, char.Parse(name.Trim()));
+        //Debug.Log(name);
+        //Debug.Log(index);
 		tile_letter = tiles[index];
 		imageComponent.sprite = tile_letter;
     }

@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -14,11 +16,14 @@ public class GameManager : MonoBehaviour
 		'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 	public static int[] tile_scores = new int[] { 1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10 };
 
+	public static string[] Dictionary;
+
 	private void Awake()
 	{
 		Instance = this;
 		Board = new char[15, 15];
 		firstTurn = true;
+		Dictionary = File.ReadAllLines(".\\Assets\\dictionary.txt");
 	}
 
 	public void reset()
@@ -44,6 +49,8 @@ public class GameManager : MonoBehaviour
 		}
 
 		string word = Instance.FindWord();
+		
+
 		if (word == "")
 		{
 			Debug.Log("No Word Played");
@@ -51,9 +58,18 @@ public class GameManager : MonoBehaviour
 		else
 		{
 			Debug.Log(word);
-			int score = ScoreWord(word);
-			ScoreSystem.Instance.AddScore(score);
-			Debug.Log(score);
+			if (Dictionary.Contains(word))
+			{
+				Debug.Log("VALID WORD");
+				int score = ScoreWord(word);
+				ScoreSystem.Instance.AddScore(score);
+				Debug.Log(score);
+			}
+			else
+			{
+				Debug.Log("Not a word, dummy");
+			}
+			
 		}
 		
 	}
