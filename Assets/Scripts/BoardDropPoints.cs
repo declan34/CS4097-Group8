@@ -28,10 +28,10 @@ public class BoardDropPoints : MonoBehaviour, IDropHandler
             char tile_name = eventData.pointerDrag.name[0];
             // Using the index of the waypoint, change the board matrix
             GameManager.Instance.Board[rowIndex,columnIndex] = tile_name;
-            Debug.Log(tile_name);
-			Debug.Log(columnIndex); 
-            Debug.Log(rowIndex);
-            Debug.Log(GameManager.Instance.Board[rowIndex, columnIndex]);
+            //Debug.Log(tile_name);
+			//Debug.Log(columnIndex); 
+            //Debug.Log(rowIndex);
+            //Debug.Log(GameManager.Instance.Board[rowIndex, columnIndex]);
 		}
     }
 }

@@ -7,9 +7,7 @@ public class DrawScript : MonoBehaviour
 	[SerializeField] private Canvas canvas;
 	public Sprite[] tiles;
     public GameObject tilePrefab;
-    public static string[] tile_letters = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", 
-        "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
-    public static int[] points = new int[] { 1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10 };
+    
 
     public List<string> bag;
 
@@ -43,9 +41,9 @@ public class DrawScript : MonoBehaviour
     public static List<string> generate_bag()
     {
         List<string> new_bag = new List<string>();
-        foreach(string t in tile_letters)
+        foreach(char t in GameManager.tile_letters)
         {
-            new_bag.Add(t);
+            new_bag.Add(t.ToString());
         }
         return new_bag;
     }

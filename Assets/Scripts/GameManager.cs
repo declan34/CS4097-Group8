@@ -8,6 +8,12 @@ public class GameManager : MonoBehaviour
 
     public char[,] Board;
 
+	private static bool firstTurn = true;
+
+	public static char[] tile_letters = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
+		'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+	public static int[] tile_scores = new int[] { 1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10 };
+
 	private void Awake()
 	{
 		Instance = this;
@@ -22,25 +28,92 @@ public class GameManager : MonoBehaviour
 	public void submit()
 	{
 		Debug.Log("OnSubmit");
-		Debug.Log(Board);
-		// Validation and Scoring
-		for(int i = 0; i < 15; i++)
+		// Check that first turn intersects the middle
+		if(firstTurn)
 		{
-			for(int j = 0; j < 15; j++) 
+			if (Board[7, 7].CompareTo('\0') == 0)
 			{
-				if (Board[i, j].CompareTo(null) == 0) // meaning there is a letter
+				Debug.Log("Invalid Move, must use center space");
+			}
+			else
+			{
+				firstTurn = false;
+			}
+		}
+
+		string word = Instance.FindWord();
+		if (word == "")
+		{
+			Debug.Log("No Word Played");
+		}
+		else
+		{
+			Debug.Log(word);
+			int score = ScoreWord(word);
+			// change global score
+			Debug.Log(score);
+		}
+		
+	}
+	public string FindWord()
+	{
+		string word;
+
+		// Validation and Scoring
+		for (int i = 0; i < 15; i++)
+		{
+			for (int j = 0; j < 15; j++)
+			{
+
+				//Debug.Log(Board[i, j].CompareTo('\0'));
+				if (Board[i, j].CompareTo('\0') > 0) // meaning there is a letter
 				{
+					//Debug.Log(Board[i, j]);
+					
 					// Check Horizontal
-					if (Board[i+1,j].CompareTo(null) == 0)
+					if (i + 1 < 15 && Board[i + 1, j].CompareTo('\0') > 0)
 					{
-						Debug.Log("Horizontal Word");
+						//Debug.Log("Vertical Word");
+						word = Board[i, j].ToString() + Board[i + 1, j].ToString();
+						int k = 2;
+
+						while (Board[i + k, j].CompareTo('\0') > 0)
+						{
+							word += Board[i + k, j].ToString();
+							k++;
+						}
+
+						return word;
 					}
-					else if (Board[i, j+1].CompareTo(null) == 0)
+					else if (j + 1 < 15 && Board[i, j + 1].CompareTo('\0') > 0)
 					{
-						Debug.Log("Vertical Word");
+						//Debug.Log("Horizontal Word");
+						word = Board[i, j].ToString() + Board[i, j + 1].ToString();
+						int k = 2;
+
+						while (Board[i, j + k].CompareTo('\0') > 0)
+						{
+							word += Board[i, j + k].ToString();
+							k++;
+						}
+						
+						return word;
 					}
 				}
 			}
 		}
+		return "";
+	}
+	public int ScoreWord(string word)
+	{
+		int score = 0;
+		int index;
+		for (int i = 0; i < word.Length; i++)
+		{
+			index = System.Array.IndexOf(tile_letters, word[i]);
+			score += tile_scores[index];
+		}
+		return score;
 	}
 }
+
