@@ -5,7 +5,6 @@ using UnityEngine;
 public class DrawScript : MonoBehaviour
 {
 	[SerializeField] private Canvas canvas;
-	public Sprite[] tiles;
     public GameObject tilePrefab;
     
 

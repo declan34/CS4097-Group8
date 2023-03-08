@@ -1,36 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class updateSprite : MonoBehaviour
 {
-    public Sprite tile_letter;
-    private SpriteRenderer spriteRenderer;
-    private DrawScript drawscript;
+	public Sprite[] tiles;
+	private Sprite tile_letter;
+    private Image imageComponent;
 
     // Start is called before the first frame update
     void Start()
     {
-        List<string> bag = DrawScript.generate_bag();
-        drawscript = FindObjectOfType<DrawScript>();
+		imageComponent = GetComponent<Image>();
 
-        int i = 0;
-        foreach (string s in bag)
-        {
-            if( this.name == s)
-            {
-                //tile_letter = drawscript.tiles[i];
-                break;
-            }
-            i++;
-        }
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        
+		int index = System.Array.IndexOf(GameManager.tile_letters, char.Parse(name));
+        Debug.Log(name);
+        Debug.Log(index);
+		tile_letter = tiles[index];
+		imageComponent.sprite = tile_letter;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //spriteRenderer.sprite = tile_letter;
+		
     }
 }
