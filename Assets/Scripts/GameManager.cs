@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 
     public char[,] Board;
 
-	private static bool firstTurn = true;
+	private static bool firstTurn;
 
 	public static char[] tile_letters = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
 		'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
 	{
 		Instance = this;
 		Board = new char[15, 15];
+		firstTurn = true;
 	}
 
 	public void reset()
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour
 			if (Board[7, 7].CompareTo('\0') == 0)
 			{
 				Debug.Log("Invalid Move, must use center space");
+				return;
 			}
 			else
 			{
@@ -50,7 +52,7 @@ public class GameManager : MonoBehaviour
 		{
 			Debug.Log(word);
 			int score = ScoreWord(word);
-			// change global score
+			ScoreSystem.Instance.AddScore(score);
 			Debug.Log(score);
 		}
 		

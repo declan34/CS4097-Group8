@@ -19,10 +19,14 @@ public class ScoreSystem : MonoBehaviour
     public float TimeLeft;
     public bool TimerOn = false;
 
+    public static ScoreSystem Instance;
+
 
     // Start is called before the first frame update
     void Start()
     {
+        Instance = this;
+
         TimerOn = true;
         piecesLeft = 100;
         score = 0;
