@@ -13,6 +13,8 @@ public class DrawScript : MonoBehaviour
 
     public List<string> bag;
 
+    ScoreSystem subtractTilesfromDraw;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -73,6 +75,8 @@ public class DrawScript : MonoBehaviour
             newtile.name = bag[i];
             newtile.transform.SetParent(canvas.transform, true);
             newtile.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            subtractTilesfromDraw=GameObject.FindGameObjectWithTag("drawtag").GetComponent<ScoreSystem>();
+            subtractTilesfromDraw.subtractTiles(1);
 
             xOffset = xOffset + 1.5f;
         }
