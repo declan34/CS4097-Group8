@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,6 +8,7 @@ using UnityEngine.EventSystems;
 public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
 	[SerializeField] private Canvas canvas;
+	private static int rowIndex, columnIndex;
 
 	private RectTransform rectTransform;
 	private CanvasGroup canvasGroup;
@@ -37,5 +39,11 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 	public void OnPointerDown(PointerEventData eventData)
     {
         Debug.Log("OnPointerDown");
-    }
+		//Debug.Log(this.);
+		//string waypointNum = Regex.Match(this.name, @"\d+").Value;
+		//columnIndex = int.Parse(waypointNum) % 15;
+		//rowIndex = (int.Parse(waypointNum) - columnIndex) / 15;
+		//Debug.Log(columnIndex);
+		//Debug.Log(rowIndex);
+	}
 }

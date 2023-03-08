@@ -71,7 +71,7 @@ public class DrawScript : MonoBehaviour
         {
             GameObject newtile = Instantiate(tilePrefab, new Vector3(transform.position.x + xOffset, transform.position.y + yOffset, transform.position.z + zOffset), Quaternion.identity);
             newtile.name = bag[i];
-            newtile.transform.parent = canvas.transform;
+            newtile.transform.SetParent(canvas.transform, true);
             newtile.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
             xOffset = xOffset + 1.5f;
