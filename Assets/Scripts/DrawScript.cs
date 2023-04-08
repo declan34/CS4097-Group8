@@ -6,20 +6,33 @@ public class DrawScript : MonoBehaviour
 {
 	[SerializeField] private Canvas canvas;
     public GameObject tilePrefab;
-    
 
-    public List<string> bag;
+
+    public List<char> bag;
+    public List<GameObject> tiles_in_play;
+    public List<GameObject> tiles_on_rack;
 
     // Start is called before the first frame update
     void Start()
     {
-        play_tiles();   
+        play_tiles();
+        enabled = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (enabled)
+        {
+            foreach(GameObject g in tiles_on_rack)
+            {
+                bag.Add(g.name[0]);
+                tiles_on_rack.Remove(g);
+                Destroy(g);
+            }
+            play_tiles();
+        }
+        enabled = false;
     }
 
     public void play_tiles()
@@ -28,19 +41,19 @@ public class DrawScript : MonoBehaviour
         Shuffle(bag);
 
         //testing
-        foreach(string tile in bag)
-        {
-            print(tile);
-        }
+       // foreach(char tile in bag)
+        //{
+          //  print(tile);
+        //}
         DealTiles();
     }
 
-    public static List<string> generate_bag()
+    public static List<char> generate_bag()
     {
-        List<string> new_bag = new List<string>();
+        List<char> new_bag = new List<char>();
         foreach(char t in GameManager.tile_letters)
         {
-            new_bag.Add(t.ToString());
+            new_bag.Add(t);
         }
         return new_bag;
     }
@@ -67,10 +80,12 @@ public class DrawScript : MonoBehaviour
         for(int i = 0; i < 7; i++)
         {
             GameObject newtile = Instantiate(tilePrefab, new Vector3(transform.position.x + xOffset, transform.position.y + yOffset, transform.position.z + zOffset), Quaternion.identity);
-            newtile.name = bag[i];
+            newtile.name = bag[i].ToString();
+            bag.RemoveAt(i);
             newtile.transform.SetParent(canvas.transform, true);
             newtile.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
             ScoreSystem.Instance.subtractTiles(1);
+            tiles_on_rack.Add(newtile);
 
             xOffset = xOffset + 1.5f;
         }
