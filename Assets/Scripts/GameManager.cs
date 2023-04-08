@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +9,7 @@ public class GameManager : MonoBehaviour
 {
 	public static GameManager Instance;
 
-    public char[,] Board;
+    public space[,] Board;
 
 	private static bool firstTurn;
 
@@ -21,14 +22,21 @@ public class GameManager : MonoBehaviour
 	private void Awake()
 	{
 		Instance = this;
-		Board = new char[15, 15];
+		Board = new space[15, 15];
+		for (int i = 0; i < 15; i++)
+		{
+			for (int j = 0; j < 15; j++)
+			{
+				Board[i, j] = new space(new Tuple<int, int>(i,j));
+			}
+		}
 		firstTurn = true;
 		Dictionary = File.ReadAllLines(".\\Assets\\dictionary.txt");
 	}
 
 	public void reset()
 	{
-		Board = new char[15, 15];
+		Board = new space[15, 15];
 	}
 
 	public void submit()
@@ -37,7 +45,7 @@ public class GameManager : MonoBehaviour
 		// Check that first turn intersects the middle
 		if(firstTurn)
 		{
-			if (Board[7, 7].CompareTo('\0') == 0)
+			if (Board[7, 7].letter == ' ')
 			{
 				Debug.Log("Invalid Move, must use center space");
 				return;
@@ -84,18 +92,18 @@ public class GameManager : MonoBehaviour
 			{
 
 				//Debug.Log(Board[i, j].CompareTo('\0'));
-				if (Board[i, j].CompareTo('\0') > 0) // meaning there is a letter
+				if (Board[i, j].letter != ' ') // meaning there is a letter
 				{
 					//Debug.Log(Board[i, j]);
 					
 					// Check Horizontal
-					if (i + 1 < 15 && Board[i + 1, j].CompareTo('\0') > 0)
+					if (i + 1 < 15 && Board[i + 1, j].letter != ' ')
 					{
 						//Debug.Log("Vertical Word");
 						word = Board[i, j].ToString() + Board[i + 1, j].ToString();
 						int k = 2;
 
-						while (Board[i + k, j].CompareTo('\0') > 0)
+						while (Board[i + k, j].letter != ' ')
 						{
 							word += Board[i + k, j].ToString();
 							k++;
@@ -103,13 +111,13 @@ public class GameManager : MonoBehaviour
 
 						return word;
 					}
-					else if (j + 1 < 15 && Board[i, j + 1].CompareTo('\0') > 0)
+					else if (j + 1 < 15 && Board[i, j + 1].letter != ' ')
 					{
 						//Debug.Log("Horizontal Word");
 						word = Board[i, j].ToString() + Board[i, j + 1].ToString();
 						int k = 2;
 
-						while (Board[i, j + k].CompareTo('\0') > 0)
+						while (Board[i, j + k].letter != ' ')
 						{
 							word += Board[i, j + k].ToString();
 							k++;
@@ -135,3 +143,24 @@ public class GameManager : MonoBehaviour
 	}
 }
 
+public class space
+{
+	private Tuple<int, int> _location = new Tuple<int, int>(-1, -1);
+	private char _letter = ' ';
+
+	public char letter {
+		get => _letter;
+		set => _letter = value;
+	}
+
+	public Tuple<int, int> location
+	{
+		get => _location;
+	}
+
+	public space(Tuple<int,int> loc) 
+	{
+		_location = loc;
+		_letter = ' ';
+	}
+}
