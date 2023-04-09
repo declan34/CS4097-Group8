@@ -70,6 +70,19 @@ public class GameManager : MonoBehaviour
 			{
 				Debug.Log("VALID WORD");
 				int score = ScoreWord(word);
+				//mark tiles as "submitted" to the board
+				for(int i = 0; i < word.Length; i++)
+				{
+					for(int j = 0; j < DrawScript.Instance.tiles_on_rack.Count; j++)
+					{
+                        if(word[i] == DrawScript.Instance.tiles_on_rack[j].name[0])
+						{
+							DrawScript.Instance.tiles_on_board.Add(DrawScript.Instance.tiles_on_rack[j]);
+                            DrawScript.Instance.tiles_on_rack.RemoveAt(j);
+                        }
+
+                    }
+				}
 				ScoreSystem.Instance.AddScore(score);
 				Debug.Log(score);
 			}

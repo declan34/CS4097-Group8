@@ -9,12 +9,15 @@ public class DrawScript : MonoBehaviour
 
 
     public List<char> bag;
-    public List<GameObject> tiles_in_play;
+    public List<GameObject> tiles_on_board;
     public List<GameObject> tiles_on_rack;
+
+    public static DrawScript Instance;
 
     // Start is called before the first frame update
     void Start()
     {
+        Instance = this;
         play_tiles();
         enabled = false;
     }
@@ -29,6 +32,8 @@ public class DrawScript : MonoBehaviour
     {
         for(int i = 0; i < 7; i++)
         {
+            //after removing the previous element, all elements have index -= 1
+            //making the next element to be removed at index 0
             bag.Add(tiles_on_rack[0].name[0]);
             //adds tiles back into tiles left counter
             ScoreSystem.Instance.addTiles(1);
@@ -84,8 +89,8 @@ public class DrawScript : MonoBehaviour
         for(int i = 0; i < 7; i++)
         {
             GameObject newtile = Instantiate(tilePrefab, new Vector3(transform.position.x + xOffset, transform.position.y + yOffset, transform.position.z + zOffset), Quaternion.identity);
-            newtile.name = bag[i].ToString();
-            bag.RemoveAt(i);
+            newtile.name = bag[0].ToString();
+            bag.RemoveAt(0);
             newtile.transform.SetParent(canvas.transform, true);
             newtile.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
             ScoreSystem.Instance.subtractTiles(1);

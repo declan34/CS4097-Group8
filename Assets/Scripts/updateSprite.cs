@@ -8,16 +8,15 @@ public class updateSprite : MonoBehaviour
 	public Sprite[] tiles;
 	private Sprite tile_letter;
     private Image imageComponent;
-    public bool OnRack;
 
     // Start is called before the first frame update
     void Start()
     {
 		imageComponent = GetComponent<Image>();
 
-		int index = System.Array.IndexOf(GameManager.tile_letters, char.Parse(name));
-        //Debug.Log(name);
-        //Debug.Log(index);
+		int index = System.Array.IndexOf(GameManager.tile_letters, name[0]);
+        Debug.Log(name);
+        Debug.Log(index);
 		tile_letter = tiles[index];
 		imageComponent.sprite = tile_letter;
     }
