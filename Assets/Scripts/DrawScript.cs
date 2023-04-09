@@ -22,17 +22,21 @@ public class DrawScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (enabled)
+
+    }
+
+    public void ReDraw()
+    {
+        for(int i = 0; i < 7; i++)
         {
-            foreach(GameObject g in tiles_on_rack)
-            {
-                bag.Add(g.name[0]);
-                tiles_on_rack.Remove(g);
-                Destroy(g);
-            }
-            play_tiles();
+            bag.Add(tiles_on_rack[0].name[0]);
+            //adds tiles back into tiles left counter
+            ScoreSystem.Instance.addTiles(1);
+            Destroy(tiles_on_rack[0]);
+            tiles_on_rack.RemoveAt(0);
         }
-        enabled = false;
+        Shuffle(bag);
+        DealTiles();
     }
 
     public void play_tiles()
