@@ -27,7 +27,7 @@ public class BoardDropPoints : MonoBehaviour, IDropHandler
             // The tile dropped will always have a name that corresponds to it's letter
             char tile_name = eventData.pointerDrag.name[0];
             // Using the index of the waypoint, change the board matrix
-            GameManager.Instance.Board[rowIndex,columnIndex] = tile_name;
+            GameManager.Instance.Board[rowIndex,columnIndex].letter = tile_name;
             //Debug.Log(tile_name);
 			//Debug.Log(columnIndex); 
             //Debug.Log(rowIndex);
