@@ -9,15 +9,11 @@ public class DrawScript : MonoBehaviour
 
 
     public List<char> bag;
-    public List<GameObject> tiles_on_board;
-    public List<GameObject> tiles_on_rack;
 
-    public static DrawScript Instance;
 
     // Start is called before the first frame update
     void Start()
     {
-        Instance = this;
         play_tiles();
         enabled = false;
     }
@@ -34,11 +30,11 @@ public class DrawScript : MonoBehaviour
         {
             //after removing the previous element, all elements have index -= 1
             //making the next element to be removed at index 0
-            bag.Add(tiles_on_rack[0].name[0]);
+            bag.Add(GameManager.Instance.tiles_on_rack[0].name[0]);
             //adds tiles back into tiles left counter
             ScoreSystem.Instance.addTiles(1);
-            Destroy(tiles_on_rack[0]);
-            tiles_on_rack.RemoveAt(0);
+            Destroy(GameManager.Instance.tiles_on_rack[0]);
+            GameManager.Instance.tiles_on_rack.RemoveAt(0);
         }
         Shuffle(bag);
         DealTiles();
@@ -80,7 +76,7 @@ public class DrawScript : MonoBehaviour
             list[n] = temp;
         }
     }
-
+        
     void DealTiles()
     {
         float xOffset = -4.5f;
@@ -94,7 +90,7 @@ public class DrawScript : MonoBehaviour
             newtile.transform.SetParent(canvas.transform, true);
             newtile.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
             ScoreSystem.Instance.subtractTiles(1);
-            tiles_on_rack.Add(newtile);
+            GameManager.Instance.tiles_on_rack.Add(newtile);
 
             xOffset = xOffset + 1.5f;
         }

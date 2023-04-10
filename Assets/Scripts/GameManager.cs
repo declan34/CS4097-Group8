@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 	public static GameManager Instance;
 
     public space[,] Board;
+	public List<GameObject> tiles_on_board;
+	public List<GameObject> tiles_on_rack;
 
 	private static bool firstTurn;
 
@@ -73,12 +75,12 @@ public class GameManager : MonoBehaviour
 				//mark tiles as "submitted" to the board
 				for(int i = 0; i < word.Length; i++)
 				{
-					for(int j = 0; j < DrawScript.Instance.tiles_on_rack.Count; j++)
+					for(int j = 0; j < tiles_on_rack.Count; j++)
 					{
-                        if(word[i] == DrawScript.Instance.tiles_on_rack[j].name[0])
+                        if(word[i] == tiles_on_rack[j].name[0])
 						{
-							DrawScript.Instance.tiles_on_board.Add(DrawScript.Instance.tiles_on_rack[j]);
-                            DrawScript.Instance.tiles_on_rack.RemoveAt(j);
+							tiles_on_board.Add(tiles_on_rack[j]);
+                            tiles_on_rack.RemoveAt(j);
                         }
 
                     }
@@ -113,12 +115,12 @@ public class GameManager : MonoBehaviour
 					if (i + 1 < 15 && Board[i + 1, j].letter != ' ')
 					{
 						//Debug.Log("Vertical Word");
-						word = Board[i, j].ToString() + Board[i + 1, j].ToString();
+						word = Board[i, j].letter.ToString() + Board[i + 1, j].letter.ToString();
 						int k = 2;
 
 						while (Board[i + k, j].letter != ' ')
 						{
-							word += Board[i + k, j].ToString();
+							word += Board[i + k, j].letter.ToString();
 							k++;
 						}
 
@@ -127,12 +129,12 @@ public class GameManager : MonoBehaviour
 					else if (j + 1 < 15 && Board[i, j + 1].letter != ' ')
 					{
 						//Debug.Log("Horizontal Word");
-						word = Board[i, j].ToString() + Board[i, j + 1].ToString();
+						word = Board[i, j].letter.ToString() + Board[i, j + 1].letter.ToString();
 						int k = 2;
 
 						while (Board[i, j + k].letter != ' ')
 						{
-							word += Board[i, j + k].ToString();
+							word += Board[i, j + k].letter.ToString();
 							k++;
 						}
 						
@@ -158,10 +160,11 @@ public class GameManager : MonoBehaviour
 
 public class space
 {
-	private Tuple<int, int> _location = new Tuple<int, int>(-1, -1);
+	private Tuple<int, int> _location;
 	private char _letter = ' ';
 
-	public char letter {
+	public char letter
+	{
 		get => _letter;
 		set => _letter = value;
 	}
@@ -171,9 +174,39 @@ public class space
 		get => _location;
 	}
 
-	public space(Tuple<int,int> loc) 
+	public space(Tuple<int, int> loc)
 	{
 		_location = loc;
 		_letter = ' ';
+	}
+}
+
+public class tile
+{
+	private GameObject _tileObject;
+	private Tuple<int, int> _location = new Tuple<int, int>(-1, -1);
+	private bool _locked = false;
+
+	public GameObject tileObject
+	{
+		get => _tileObject;
+		set => _tileObject = value;
+	}
+
+	public Tuple<int, int> location
+	{
+		get => _location;
+		set => _location = value;
+	}
+
+	public bool locked
+	{
+		get => _locked;
+		set => _locked = value;
+	}
+
+	public tile(GameObject tileObj)
+	{
+		_tileObject = tileObj;
 	}
 }
