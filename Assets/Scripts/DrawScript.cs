@@ -30,10 +30,10 @@ public class DrawScript : MonoBehaviour
         {
             //after removing the previous element, all elements have index -= 1
             //making the next element to be removed at index 0
-            bag.Add(GameManager.Instance.tiles_on_rack[0].name[0]);
+            bag.Add(GameManager.Instance.tiles_on_rack[0].tileObject.name[0]);
             //adds tiles back into tiles left counter
             ScoreSystem.Instance.addTiles(1);
-            Destroy(GameManager.Instance.tiles_on_rack[0]);
+            Destroy(GameManager.Instance.tiles_on_rack[0].tileObject);
             GameManager.Instance.tiles_on_rack.RemoveAt(0);
         }
         Shuffle(bag);
@@ -84,11 +84,13 @@ public class DrawScript : MonoBehaviour
         float zOffset = 0.01f;
         for(int i = 0; i < 7; i++)
         {
-            GameObject newtile = Instantiate(tilePrefab, new Vector3(transform.position.x + xOffset, transform.position.y + yOffset, transform.position.z + zOffset), Quaternion.identity);
-            newtile.name = bag[0].ToString();
+            tile newtile = new tile(Instantiate(tilePrefab, new Vector3(transform.position.x + xOffset, transform.position.y + yOffset, transform.position.z + zOffset), Quaternion.identity));
+            newtile.tileObject.name = bag[0].ToString();
+            // GameObject newtile = Instantiate(tilePrefab, new Vector3(transform.position.x + xOffset, transform.position.y + yOffset, transform.position.z + zOffset), Quaternion.identity);
+            //newtile.name = bag[0].ToString();
             bag.RemoveAt(0);
-            newtile.transform.SetParent(canvas.transform, true);
-            newtile.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            newtile.tileObject.transform.SetParent(canvas.transform, true);
+            newtile.tileObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
             ScoreSystem.Instance.subtractTiles(1);
             GameManager.Instance.tiles_on_rack.Add(newtile);
 

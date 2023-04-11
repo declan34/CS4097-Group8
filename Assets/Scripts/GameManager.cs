@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour
 	public static GameManager Instance;
 
     public space[,] Board;
-	public List<GameObject> tiles_on_board;
-	public List<GameObject> tiles_on_rack;
+	public List<tile> tiles_on_board;
+	public List<tile> tiles_on_rack;
 
 	private static bool firstTurn;
 
@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour
 				{
 					for(int j = 0; j < tiles_on_rack.Count; j++)
 					{
-                        if(word[i] == tiles_on_rack[j].name[0])
+                        if(word[i] == tiles_on_rack[j].tileObject.name[0])
 						{
 							tiles_on_board.Add(tiles_on_rack[j]);
                             tiles_on_rack.RemoveAt(j);
@@ -181,7 +181,7 @@ public class space
 	}
 }
 
-public class tile
+public class tile : MonoBehaviour
 {
 	private GameObject _tileObject;
 	private Tuple<int, int> _location = new Tuple<int, int>(-1, -1);
@@ -204,9 +204,15 @@ public class tile
 		get => _locked;
 		set => _locked = value;
 	}
-
-	public tile(GameObject tileObj)
+	/*
+	public tile(GameObject prefab, Vector3 vec, Quaternion quat)
 	{
-		_tileObject = tileObj;
+		_tileObject = Instantiate(prefab, vec, quat);
+	}
+	*/
+
+	public tile(GameObject tile)
+	{
+		_tileObject = tile;
 	}
 }
