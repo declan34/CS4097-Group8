@@ -16,6 +16,11 @@ public class Tile : MonoBehaviour
         tileObject.location = loc;
     }
 
+	public (int, int) getLocation()
+	{
+		return tileObject.location;
+	}
+
 	public void lockTile()
 	{
 		tileObject.locked = true;
@@ -25,5 +30,4 @@ public class Tile : MonoBehaviour
 	{
 		tileObject.locked = false;
 	}
-
 }

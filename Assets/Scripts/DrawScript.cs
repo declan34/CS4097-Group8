@@ -4,18 +4,16 @@ using UnityEngine;
 
 public class DrawScript : MonoBehaviour
 {
+    public static DrawScript Instance;
 	[SerializeField] private Canvas canvas;
     public GameObject tilePrefab;
 
-
     public List<char> bag;
-
 
     // Start is called before the first frame update
     void Start()
     {
         play_tiles();
-        enabled = false;
     }
 
     // Update is called once per frame
@@ -38,6 +36,27 @@ public class DrawScript : MonoBehaviour
         }
         Shuffle(bag);
         DealTiles();
+        return;
+    }
+
+    public void FillRack(int index)
+    {
+        float xOffset = -4.5f;
+        float yOffset = -9.5f;
+        float zOffset = 0.01f;
+
+        xOffset = xOffset + (index * 1.5f);
+
+        GameObject newtile = Instantiate(tilePrefab, new Vector3(transform.position.x + xOffset, transform.position.y + yOffset, transform.position.z + zOffset), Quaternion.identity);
+        newtile.name = bag[0].ToString();
+        Debug.Log(bag[0].ToString());
+        bag.RemoveAt(0);
+        newtile.transform.SetParent(canvas.transform, true);
+        newtile.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        ScoreSystem.Instance.subtractTiles(1);
+        GameManager.Instance.tiles_on_rack.Add(newtile);
+
+        return;
     }
 
     public void play_tiles()
@@ -51,6 +70,7 @@ public class DrawScript : MonoBehaviour
           //  print(tile);
         //}
         DealTiles();
+        return;
     }
 
     public static List<char> generate_bag()
@@ -75,6 +95,7 @@ public class DrawScript : MonoBehaviour
             list[k] = list[n];
             list[n] = temp;
         }
+        return;
     }
         
     void DealTiles()
@@ -93,8 +114,8 @@ public class DrawScript : MonoBehaviour
             ScoreSystem.Instance.subtractTiles(1);
             GameManager.Instance.tiles_on_rack.Add(newtile);
 
-            xOffset = xOffset + 1.5f;
+           xOffset = xOffset + 1.5f;
         }
-
+        return;
     }
 }

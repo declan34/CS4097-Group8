@@ -15469,8 +15469,6 @@ MonoBehaviour:
   canvas: {fileID: 460360404}
   tilePrefab: {fileID: 1901173978}
   bag: 
-  tiles_on_board: []
-  tiles_on_rack: []
 --- !u!222 &1332057219
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20746,6 +20744,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d19acd8435b1db4ca6386edc2ac9c1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tiles_on_board: []
+  tiles_on_rack: []
 --- !u!4 &1824462937
 Transform:
   m_ObjectHideFlags: 0

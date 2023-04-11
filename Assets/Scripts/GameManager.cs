@@ -13,8 +13,6 @@ public class GameManager : MonoBehaviour
 	public List<GameObject> tiles_on_board;
 	public List<GameObject> tiles_on_rack;
 
-	//private static bool firstTurn;
-
 	private int turnCount;
 
 	public static char[] tile_letters = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
@@ -34,7 +32,6 @@ public class GameManager : MonoBehaviour
 				Board[i, j] = new space((i,j));
 			}
 		}
-		//firstTurn = true;
 		turnCount = 0;
 		Dictionary = File.ReadAllLines(".\\Assets\\dictionary.txt");
 	}
@@ -67,16 +64,7 @@ public class GameManager : MonoBehaviour
 			}
 			int score = ScoreBoard();
             ScoreSystem.Instance.AddScore(score);
-
-			////mark tiles as "submitted" to the board
-			//for (int i = 0; i < tiles_on_rack.Count; i++)
-			//{
-			//	if (word[i] == tiles_on_rack[j].name[0])
-			//	{
-			//		tiles_on_board.Add(tiles_on_rack[j]);
-			//		tiles_on_rack.RemoveAt(j);
-			//	}
-			//}
+			RefillRack();
 		}
         return;
 	}
@@ -248,6 +236,19 @@ public class GameManager : MonoBehaviour
             score += tile_scores[index];
         }
         return score;
+    }
+
+	public void RefillRack()
+	{
+		for(int i = 0; i < 7; i++)
+		{
+			//if ( /* tile_on_rack[i] is on the board */ )
+			//{
+				//tiles_on_rack[i].GetComponent<Tile>().lockTile(); //lock the tile
+				//DrawScript.Instance.FillRack(i); //fill the rack where the tile used to be
+			//}
+        }
+		return;
     }
 }
 
