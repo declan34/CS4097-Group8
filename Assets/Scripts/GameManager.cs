@@ -13,7 +13,9 @@ public class GameManager : MonoBehaviour
 	public List<GameObject> tiles_on_board;
 	public List<GameObject> tiles_on_rack;
 
-	private static bool firstTurn;
+	//private static bool firstTurn;
+
+	private int turnCount;
 
 	public static char[] tile_letters = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
 		'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
@@ -32,7 +34,8 @@ public class GameManager : MonoBehaviour
 				Board[i, j] = new space(new Tuple<int, int>(i,j));
 			}
 		}
-		firstTurn = true;
+		//firstTurn = true;
+		turnCount = 0;
 		Dictionary = File.ReadAllLines(".\\Assets\\dictionary.txt");
 	}
 
@@ -43,119 +46,191 @@ public class GameManager : MonoBehaviour
 
 	public void submit()
 	{
-		Debug.Log("OnSubmit");
-		// Check that first turn intersects the middle
-		if(firstTurn)
+		//users turns are the first turn and every-other turn a.k.a. mod 2
+		if (turnCount % 2 == 0)
 		{
-			if (Board[7, 7].letter == ' ')
+			Debug.Log("OnSubmit");
+			// Check that first turn intersects the middle
+			if (turnCount == 0)
 			{
-				Debug.Log("Invalid Move, must use center space");
+				if (Board[7, 7].letter == ' ')
+				{
+					Debug.Log("Invalid Move, must use center space");
+					return;
+				}
+			}
+
+			if( !ValidateBoard() )
+			{
+				Debug.Log("BOARD NOT VALID");
 				return;
 			}
-			else
+			int score = ScoreBoard();
+            ScoreSystem.Instance.AddScore(score);
+
+			////mark tiles as "submitted" to the board
+			//for (int i = 0; i < tiles_on_rack.Count; i++)
+			//{
+			//	if (word[i] == tiles_on_rack[j].name[0])
+			//	{
+			//		tiles_on_board.Add(tiles_on_rack[j]);
+			//		tiles_on_rack.RemoveAt(j);
+			//	}
+			//}
+		}
+        return;
+	}
+
+	public bool ValidateBoard()
+	{
+		for (int row = 0; row < 15; row++)
+		{
+			for (int col = 0; col < 15; col++)
 			{
-				firstTurn = false;
+				if (Board[row, col].letter != ' ') //if there is a letter at the position
+				{
+					if( CheckHorizontal(row, col) ) //check if word starts here horizontally
+					{
+						string word = getWordHorizontal(row, col);
+						if (!Dictionary.Contains(word))
+						{ //checks word
+                            Debug.Log(word + " is not a word");
+                            return false;
+						}
+						Debug.Log("horizontal word: " + word);
+					}
+
+					if( CheckVertical(row, col)) //if the word starts here vertically
+					{
+                        string word = getWordVertical(row, col);
+                        if (!Dictionary.Contains(word))
+                        { //checks word
+							Debug.Log(word + " is not a word");
+                            return false;
+                        }
+						Debug.Log("vertical word: " + word);
+                    }
+				}
 			}
 		}
 
-		string word = Instance.FindWord();
-		
+		return true;
+    }
 
-		if (word == "")
+	public bool CheckHorizontal(int row, int col) 
+	{ //checks to see if the tile is the start of a word vertically
+		if ( (col +1) < 15) //range check
 		{
-			Debug.Log("No Word Played");
+			if (Board[row, col+1].letter != ' ') //if there is a letter below the targeted tile
+			{
+				if (Board[row, col - 1].letter != ' ') //if there is a letter above and below target tile
+				{
+					return false; //return false because the tile is in the middle of a word
+				}
+				else
+				{
+                    return true; //else returns true because the tile is at the start of a word
+                }
+			}
+			else
+			{
+				return false;
+			}
 		}
 		else
 		{
-			Debug.Log(word);
-			if (Dictionary.Contains(word))
-			{
-				Debug.Log("VALID WORD");
-				int score = ScoreWord(word);
-				//mark tiles as "submitted" to the board
-				for(int i = 0; i < word.Length; i++)
-				{
-					for(int j = 0; j < tiles_on_rack.Count; j++)
-					{
-                        if(word[i] == tiles_on_rack[j].name[0])
-						{
-							tiles_on_board.Add(tiles_on_rack[j]);
-                            tiles_on_rack.RemoveAt(j);
-                        }
+			return false;
+		}
+	}
 
-                    }
-				}
-				ScoreSystem.Instance.AddScore(score);
-				Debug.Log(score);
-			}
+    public bool CheckVertical(int row, int col)
+    { //checks to see if the tile is the start of a word horizontally
+        if ((row + 1) < 15)
+        {
+            if (Board[row + 1, col].letter != ' ') //if there is a letter to the right of the targeted tile
+            {
+                if (Board[row - 1, col].letter != ' ') //if there is a letter left and right of the target tile
+                {
+                    return false; //return false because the tile is in the middle of a word
+                }
+                else
+				{
+                    return true; //else returns true because the tile is at the start of a word
+                }
+            }
 			else
 			{
-				Debug.Log("Not a word, dummy");
+				return false;
 			}
-			
-		}
-		
-	}
-	public string FindWord()
-	{
-		string word;
-
-		// Validation and Scoring
-		for (int i = 0; i < 15; i++)
+        }
+		else
 		{
-			for (int j = 0; j < 15; j++)
-			{
-
-				//Debug.Log(Board[i, j].CompareTo('\0'));
-				if (Board[i, j].letter != ' ') // meaning there is a letter
-				{
-					//Debug.Log(Board[i, j]);
-					
-					// Check Horizontal
-					if (i + 1 < 15 && Board[i + 1, j].letter != ' ')
-					{
-						//Debug.Log("Vertical Word");
-						word = Board[i, j].letter.ToString() + Board[i + 1, j].letter.ToString();
-						int k = 2;
-
-						while (Board[i + k, j].letter != ' ')
-						{
-							word += Board[i + k, j].letter.ToString();
-							k++;
-						}
-
-						return word;
-					}
-					else if (j + 1 < 15 && Board[i, j + 1].letter != ' ')
-					{
-						//Debug.Log("Horizontal Word");
-						word = Board[i, j].letter.ToString() + Board[i, j + 1].letter.ToString();
-						int k = 2;
-
-						while (Board[i, j + k].letter != ' ')
-						{
-							word += Board[i, j + k].letter.ToString();
-							k++;
-						}
-						
-						return word;
-					}
-				}
-			}
+			return false;
 		}
-		return "";
-	}
-	public int ScoreWord(string word)
+    }
+
+	public string getWordVertical(int row, int col)
 	{
+        int k = row;
+        string word = "";
+        while (k < 15 && Board[k, col].letter != ' ') //while on the board and reading letters
+        { //collects the word
+            word += Board[k, col].letter.ToString();
+            k++;
+        }
+		return word;
+    }
+
+	public string getWordHorizontal(int row, int col)
+	{
+        int k = col;
+        string word = "";
+        while (k < 15 && Board[row, k].letter != ' ') //while on the board and reading letters
+        { //collects the word
+            word += Board[row, k].letter.ToString();
+            k++;
+        }
+		return word;
+    }
+
+	public int ScoreBoard()
+    { //to be used after board is validated, adds the values of all words together
 		int score = 0;
-		int index;
-		for (int i = 0; i < word.Length; i++)
-		{
-			index = System.Array.IndexOf(tile_letters, word[i]);
-			score += tile_scores[index];
-		}
+        for (int row = 0; row < 15; row++)
+        {
+            for (int col = 0; col < 15; col++)
+            {
+                if (Board[row, col].letter != ' ') //if there is a letter at the position
+                {
+                    if (CheckHorizontal(row, col)) //check if word starts here horizontally
+                    {
+                        string word = getWordHorizontal(row, col);
+						score += ScoreWord(word);
+                    }
+
+                    if (CheckVertical(row, col)) //if the word starts here vertically
+                    {
+                        string word = getWordVertical(row, col);
+                        score += ScoreWord(word);
+                    }
+                }
+            }
+        }
+
 		return score;
-	}
+    }
+
+    public int ScoreWord(string word)
+    {
+        int score = 0;
+        int index;
+        for (int i = 0; i < word.Length; i++)
+        {
+            index = System.Array.IndexOf(tile_letters, word[i]);
+            score += tile_scores[index];
+        }
+        return score;
+    }
 }
 
 public class space
