@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
 		{
 			for (int j = 0; j < 15; j++)
 			{
-				Board[i, j] = new space(new Tuple<int, int>(i,j));
+				Board[i, j] = new space((i,j));
 			}
 		}
 		//firstTurn = true;
@@ -235,7 +235,7 @@ public class GameManager : MonoBehaviour
 
 public class space
 {
-	private Tuple<int, int> _location;
+	private (int,int) _location;
 	private char _letter = ' ';
 
 	public char letter
@@ -244,22 +244,22 @@ public class space
 		set => _letter = value;
 	}
 
-	public Tuple<int, int> location
+	public (int,int) location
 	{
 		get => _location;
 	}
 
-	public space(Tuple<int, int> loc)
+	public space((int,int) loc)
 	{
 		_location = loc;
 		_letter = ' ';
 	}
 }
 
-public class tile : MonoBehaviour
+public class tile : ScriptableObject
 {
 	private GameObject _tileObject;
-	private Tuple<int, int> _location = new Tuple<int, int>(-1, -1);
+	private (int,int) _location = (-1, -1);
 	private bool _locked = false;
 
 	public GameObject tileObject
@@ -268,7 +268,7 @@ public class tile : MonoBehaviour
 		set => _tileObject = value;
 	}
 
-	public Tuple<int, int> location
+	public (int, int) location
 	{
 		get => _location;
 		set => _location = value;
@@ -279,12 +279,6 @@ public class tile : MonoBehaviour
 		get => _locked;
 		set => _locked = value;
 	}
-	/*
-	public tile(GameObject prefab, Vector3 vec, Quaternion quat)
-	{
-		_tileObject = Instantiate(prefab, vec, quat);
-	}
-	*/
 
 	public tile(GameObject tile)
 	{

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Text.RegularExpressions;
 using Unity.VisualScripting;
+using System;
 
 public class BoardDropPoints : MonoBehaviour, IDropHandler
 {
@@ -12,6 +13,8 @@ public class BoardDropPoints : MonoBehaviour, IDropHandler
 	{
         
 	}
+
+
 
 	public void OnDrop(PointerEventData eventData)
     {
@@ -28,6 +31,11 @@ public class BoardDropPoints : MonoBehaviour, IDropHandler
             char tile_name = eventData.pointerDrag.name[0];
             // Using the index of the waypoint, change the board matrix
             GameManager.Instance.Board[rowIndex,columnIndex].letter = tile_name;
+            int rackIndex = GameManager.Instance.tiles_on_rack.FindIndex(x => x.name == tile_name.ToString());
+
+            GameManager.Instance.tiles_on_rack[rackIndex].location = (rowIndex, columnIndex);
+            Debug.Log(GameManager.Instance.tiles_on_rack[rackIndex].location);
+            
             //Debug.Log(tile_name);
 			//Debug.Log(columnIndex); 
             //Debug.Log(rowIndex);
