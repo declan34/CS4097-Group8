@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour
 	public static GameManager Instance;
 
     public space[,] Board;
-	public List<tile> tiles_on_board;
-	public List<tile> tiles_on_rack;
+	public List<GameObject> tiles_on_board;
+	public List<GameObject> tiles_on_rack;
 
 	//private static bool firstTurn;
 
@@ -256,17 +256,10 @@ public class space
 	}
 }
 
-public class tile : ScriptableObject
+public class tile
 {
-	private GameObject _tileObject;
-	private (int,int) _location = (-1, -1);
-	private bool _locked = false;
-
-	public GameObject tileObject
-	{
-		get => _tileObject;
-		set => _tileObject = value;
-	}
+	private (int, int) _location;
+	private bool _locked;
 
 	public (int, int) location
 	{
@@ -280,8 +273,9 @@ public class tile : ScriptableObject
 		set => _locked = value;
 	}
 
-	public tile(GameObject tile)
+	public tile()
 	{
-		_tileObject = tile;
+		_locked = false;
+		_location = (-1, -1);
 	}
 }

@@ -39,11 +39,12 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 	public void OnPointerDown(PointerEventData eventData)
     {
         Debug.Log("OnPointerDown");
-		//Debug.Log(this.);
-		//string waypointNum = Regex.Match(this.name, @"\d+").Value;
-		//columnIndex = int.Parse(waypointNum) % 15;
-		//rowIndex = (int.Parse(waypointNum) - columnIndex) / 15;
-		//Debug.Log(columnIndex);
-		//Debug.Log(rowIndex);
+		Debug.Log(this.GetComponent<Tile>().tileObject.location);
+		if (this.GetComponent<Tile>().tileObject.location != (-1, -1))
+		{
+			(int x, int y) = this.GetComponent<Tile>().tileObject.location;
+			GameManager.Instance.Board[x, y].letter = ' ';
+			this.GetComponent<Tile>().changeLocation((-1, -1));
+		}
 	}
 }
