@@ -46,7 +46,7 @@ public class DrawScript : MonoBehaviour
         Shuffle(bag);
 
         //testing
-       // foreach(char tile in bag)
+        //foreach(char tile in bag)
         //{
           //  print(tile);
         //}
