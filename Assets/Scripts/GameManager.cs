@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
 		turnCount = 0;
 		Dictionary = File.ReadAllLines(".\\Assets\\dictionary.txt");
 
-		ALL_BONUS = TRIPLE_LETTER_BONUS.Concat(DOUBLE_WORD_BONUS).ToArray().Concat(TRIPLE_LETTER_BONUS).ToArray().Concat(DOUBLE_LETTER_BONUS).ToArray();
+		ALL_BONUS = TRIPLE_WORD_BONUS.Concat(DOUBLE_WORD_BONUS).ToArray().Concat(TRIPLE_LETTER_BONUS).ToArray().Concat(DOUBLE_LETTER_BONUS).ToArray();
 	}
 
 	public void reset()
@@ -79,6 +79,7 @@ public class GameManager : MonoBehaviour
 				bool horizontalWord = true;
 				bool verticalWord = true;
 				string playedWord;
+				List<int> score_mods = new List<int>();
 				for (int i = 0; i < tiles_on_rack.Count; i++)
 				{
 					if (tiles_on_rack[i].GetComponent<Tile>().tileObject.location != (-1, -1))
@@ -111,10 +112,12 @@ public class GameManager : MonoBehaviour
 				{
 					played_tiles = played_tiles.OrderBy(t => t.GetComponent<Tile>().tileObject.location.Item2).ToList();
 					playedWord = getWordHorizontal(played_tiles[0].GetComponent<Tile>().tileObject.location.Item1, played_tiles[0].GetComponent<Tile>().tileObject.location.Item2);
+
 				}
 				else
 				{
 					played_tiles = played_tiles.OrderBy(t => t.GetComponent<Tile>().tileObject.location.Item1).ToList();
+					
 					playedWord = getWordVertical(played_tiles[0].GetComponent<Tile>().tileObject.location.Item1, played_tiles[0].GetComponent<Tile>().tileObject.location.Item2);
 				}
 				ScoreSystem.Instance.AddPlayerScore(ScoreWord(playedWord));
