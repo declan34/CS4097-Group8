@@ -13,13 +13,8 @@ public class updateSprite : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //GameManager gmmgr = GameManager.Find("");
-        //int tile_set = gmmgr.tile_scores_int;
-        //GameManager.Instance.tile_scores_int;
 		imageComponent = GetComponent<Image>();
 		int index = System.Array.IndexOf(GameManager.tile_letters, name[0]);
-        //Debug.Log(tile_set);
-        //Debug.Log(index);
         if (index != -1)
         {
             if(GameManager.Instance.tile_scores_int == 0)
