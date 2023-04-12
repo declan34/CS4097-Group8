@@ -106,6 +106,7 @@ public class GameManager : MonoBehaviour
 					if (tiles_on_rack[i].GetComponent<Tile>().tileObject.location != (-1, -1))
 					{
 						played_tiles.Add(tiles_on_rack[i]);
+						DrawScript.Instance.FillRack(i);
 					}
 				}
 				
