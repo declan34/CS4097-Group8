@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public space[,] Board;
 	public List<GameObject> tiles_on_board;
 	public List<GameObject> tiles_on_rack;
+	public List<GameObject> computer_hand;
 
 	private int turnCount;
 
@@ -118,7 +119,11 @@ public class GameManager : MonoBehaviour
 			*/
 
 			RefillRack();
+			turnCount++;
 		}
+		computerPlay();
+		turnCount++;
+
         return;
 	}
 
@@ -284,6 +289,280 @@ public class GameManager : MonoBehaviour
 			//}
         }
 		return;
+    }
+
+	public void computerPlay()
+	{
+		bool solution = false;
+		for (int row = 0; row < 15; row++)
+		{
+			for (int col = 0; col < 15; col++)
+			{
+				if (Board[row, col].letter == ' ')
+				{
+					(string, string) word = FindValidWord(row, col);
+					if(word.Item2 == "CENTER")
+					{
+						Debug.Log("CENTER");
+						//for(int i = 0; i < computer_hand.Count; i++)
+						//{
+						//	if (word.Item1 == computer_hand[i].name)
+						//	{
+						//		//move tile to the location
+						//	}
+						//}
+						return;
+					}
+                    if (word.Item2 == "LEFT")
+                    {
+                        Debug.Log("LEFT");
+						return;
+                    }
+                    if (word.Item2 == "ABOVE")
+                    {
+                        Debug.Log("ABOVE");
+						return;
+                    }
+                    if (word.Item2 == "RIGHT")
+                    {
+                        Debug.Log("RIGHT");
+						return;
+                    }
+                    if (word.Item2 == "BELOW")
+                    {
+                        Debug.Log("BELOW");
+						return;
+                    }
+                }
+			}
+		}
+        Debug.Log("REDRAW");
+		DrawScript.Instance.computerDraw();
+		return;
+    }
+
+	public (string, string) FindValidWord(int row, int col)
+	{
+
+		//check if the word connects to existing tile
+		if ((col + 1 < 15 && Board[row, col + 1].letter != ' ') || (col - 1 >= 0 && Board[row, col - 1].letter != ' ') ||
+			(row + 1 < 15 && Board[row + 1, col].letter != ' ') || (row - 1 >= 0 && Board[row - 1, col].letter != ' '))
+		{
+			return ("", "NONE");
+		}
+
+		//if there is letters above and below the space
+		if ((row + 1 < 15 && Board[row + 1, col].letter != ' ') && (row - 1 >= 0 && Board[row - 1, col].letter != ' '))
+		{
+			//get the letters above the space
+			int k = row;
+			while (row - 1 >= 0 && Board[row - 1, col].letter != ' ')
+			{
+				k -= 1;
+			}
+			string word1 = getWordVertical(k, col);
+
+			//get the letters below the space
+			string word2 = getWordVertical(row + 1, col);
+
+			//find a letter to connect the two "words" together
+			for (int i = 0; i < 7; i++)
+			{
+				string totalword = word1 + computer_hand[i].name[0] + word2;
+				foreach (string word in Dictionary)
+				{
+					if (totalword == word)
+					{
+						return (computer_hand[i].name, "CENTER");
+					}
+				}
+			}
+		}
+		else
+		{
+			//if there is letter above
+			if (row - 1 >= 0 && Board[row - 1, col].letter != ' ')
+			{
+				//get the letters above the space
+				int k = row;
+				while (row - 1 >= 0 && Board[row - 1, col].letter != ' ')
+				{
+					k -= 1;
+				}
+				string word1 = getWordVertical(k, col);
+
+				//find the possible word combinations added to the end of word1
+				List<List<GameObject>> permutations = Permute(computer_hand);
+				foreach (string word in Dictionary)
+				{
+					string word2 = "";
+					foreach(List<GameObject> g in permutations)
+					{
+						foreach(GameObject go in g)
+						{
+                            word2 += go.name[0];
+                        }
+						if(word1 + word2 == word)
+						{ 
+							return (word2, "BELOW"); 
+						}
+					}
+				}
+			}
+			//if there is letter below
+			if (row + 1 < 15 && Board[row + 1, col].letter != ' ')
+			{
+				//get word below the space
+				string word2 = getWordVertical(row + 1, col);
+
+                //find the possible word combinations added to the begining of word2
+                List<List<GameObject>> permutations = Permute(computer_hand);
+                foreach (string word in Dictionary)
+                {
+                    string word1 = "";
+                    foreach (List<GameObject> g in permutations)
+                    {
+                        foreach (GameObject go in g)
+                        {
+                            word1 += go.name[0];
+                        }
+                        if (word1 + word2 == word)
+                        {
+                            return (word1, "ABOVE");
+                        }
+                    }
+                }
+            }
+		}
+		//if there is letter to left and right
+		if ((col + 1 < 15 && Board[row, col + 1].letter != ' ') && (col - 1 >= 0 && Board[row, col - 1].letter != ' '))
+		{
+            //get the letters left of the space
+            int k = col;
+            while (col - 1 >= 0 && Board[row, col - 1].letter != ' ')
+            {
+                k -= 1;
+            }
+            string word1 = getWordHorizontal(row, k);
+
+            //get the letters right of the space
+            string word2 = getWordHorizontal(row, col + 1);
+
+            //find a letter to connect the two "words" together
+            for (int i = 0; i < 7; i++)
+            {
+                string totalword = word1 + computer_hand[i].name[0] + word2;
+                foreach (string word in Dictionary)
+                {
+                    if (totalword == word)
+                    {
+                        return (computer_hand[i].name, "CENTER");
+                    }
+                }
+            }
+        }
+		else
+		{
+			//if there is letter to left
+			if (col - 1 >= 0 && Board[row, col - 1].letter != ' ')
+			{
+                //get the letters left of the space
+                int k = col;
+                while (col - 1 >= 0 && Board[row, col - 1].letter != ' ')
+                {
+                    k -= 1;
+                }
+                string word1 = getWordHorizontal(row, k);
+
+                //find the possible word combinations added to the end of word1
+                List<List<GameObject>> permutations = Permute(computer_hand);
+                foreach (string word in Dictionary)
+                {
+                    string word2 = "";
+                    foreach (List<GameObject> g in permutations)
+                    {
+                        foreach (GameObject go in g)
+                        {
+                            word2 += go.name[0];
+                        }
+                        if (word1 + word2 == word)
+                        {
+                            return (word2, "RIGHT");
+                        }
+                    }
+                }
+            }
+			//if there is letter to right
+			if (col + 1 < 15 && Board[row, col + 1].letter != ' ')
+			{
+                //get word right of the space
+                string word2 = getWordHorizontal(row, col + 1);
+
+                //find the possible word combinations added to the begining of word2
+                List<List<GameObject>> permutations = Permute(computer_hand);
+                foreach (string word in Dictionary)
+                {
+                    string word1 = "";
+                    foreach (List<GameObject> g in permutations)
+                    {
+                        foreach (GameObject go in g)
+                        {
+                            word1 += go.name[0];
+                        }
+                        if (word1 + word2 == word)
+                        {
+                            return (word1, "LEFT");
+                        }
+                    }
+                }
+            }
+		}
+		return ("", "NONE");
+	}
+
+    List<List<GameObject>> Permute(List<GameObject> list)
+    {
+        // Initialize variables
+        List<List<GameObject>> permutations = new List<List<GameObject>>();
+
+        // Call the recursive helper function
+        Permute(list, 0, list.Count - 1, permutations);
+
+        // Return the list of permutations
+        return permutations;
+    }
+
+    void Permute(List<GameObject> list, int start, int end, List<List<GameObject>> permutations)
+    {
+        // Check if we have reached the end of the list
+        if (start == end)
+        {
+            // Add the current permutation to the list
+            permutations.Add(new List<GameObject>(list));
+        }
+        else
+        {
+            // Loop through each element in the list
+            for (int i = start; i <= end; i++)
+            {
+                // Swap the current element with the start element
+                Swap(list, start, i);
+
+                // Recursively permute the rest of the list
+                Permute(list, start + 1, end, permutations);
+
+                // Swap back the elements to restore the original order
+                Swap(list, start, i);
+            }
+        }
+		return;
+    }
+
+    void Swap(List<GameObject> list, int i, int j)
+	{
+        GameObject temp = list[i];
+        list[i] = list[j];
+        list[j] = temp;
     }
 }
 
