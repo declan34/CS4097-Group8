@@ -14,13 +14,14 @@ public class GameManager : MonoBehaviour
 	public List<GameObject> tiles_on_board;
 	public List<GameObject> tiles_on_rack;
 	public List<GameObject> computer_hand;
-	public int tile_scores_int; 
+	public int tile_scores_int;
 	private int turnCount;
+	public static int[] tile_scores;
 
 	public static char[] tile_letters = new char[] { 'A', 'A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'E', 'F', 'F', 'F', 'G', 'G', 'G', 'H',
         'H', 'H', 'I', 'I', 'I', 'J', 'J', 'K', 'K', 'K', 'L', 'L', 'L', 'M', 'M', 'M', 'N', 'N', 'N', 'O', 'O', 'O', 'P', 'P', 'P', 'Q', 'Q', 'R',
         'R', 'S', 'S', 'T', 'T', 'T', 'U', 'U', 'V', 'V', 'W', 'W', 'X', 'X', 'Y', 'Y', 'Z', 'Z' };
-	public static int[] tile_scores = new int[] { 1, 1, 1, 3, 3, 3, 3, 2, 2, 1, 1, 1, 4, 4, 4, 2, 2, 2, 4, 4, 4, 1, 1, 1, 8, 8, 5, 5, 1, 1, 1, 1, 1, 3, 
+	public static int[] tile_scores_default = new int[] { 1, 1, 1, 3, 3, 3, 3, 2, 2, 1, 1, 1, 4, 4, 4, 2, 2, 2, 4, 4, 4, 1, 1, 1, 8, 8, 5, 5, 1, 1, 1, 1, 1, 3, 
 		3, 3, 1, 1, 1, 1, 1, 1, 3, 3, 10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 8, 8, 4, 4, 10, 10 };
 
 	private (int, int)[] TRIPLE_WORD_BONUS = new (int, int)[] {(0,0), (0,7), (0,14), (7,0), (7, 14), (14,0), (14, 7), (14,14)};
@@ -28,6 +29,7 @@ public class GameManager : MonoBehaviour
 	private (int, int)[] TRIPLE_LETTER_BONUS = new (int, int)[] { (1, 5), (1, 9), (5, 1), (5, 5), (5, 9), (5, 13), (9, 1), (9, 5), (9, 9), (9, 13), (13, 5), (13, 9)};
 	private (int, int)[] DOUBLE_LETTER_BONUS = new (int, int)[] { (2, 6), (2, 8), (3, 7), (6, 2), (6, 6), (6, 8), (6, 12), (7, 3), (7, 11), (8, 2), (8, 6), (8, 8), (8, 12), (11, 7), (12, 6), (12, 8)};
 	private (int, int)[] ALL_BONUS;
+	
 	public static int[] tile_scores_1s = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 
 	public static string[] Dictionary;
@@ -47,6 +49,10 @@ public class GameManager : MonoBehaviour
 		Dictionary = File.ReadAllLines(".\\Assets\\dictionary.txt");
 		System.Random rng = new System.Random(); 
 		tile_scores_int = rng.Next(2);
+		if (tile_scores_int == 0)
+			tile_scores = tile_scores_default;
+		else if (tile_scores_int == 1)
+			tile_scores = tile_scores_1s;
 
 		ALL_BONUS = TRIPLE_WORD_BONUS.Concat(DOUBLE_WORD_BONUS).ToArray().Concat(TRIPLE_LETTER_BONUS).ToArray().Concat(DOUBLE_LETTER_BONUS).ToArray();
 	}
@@ -116,14 +122,28 @@ public class GameManager : MonoBehaviour
 				else if (horizontalWord)
 				{
 					played_tiles = played_tiles.OrderBy(t => t.GetComponent<Tile>().tileObject.location.Item2).ToList();
-					playedWord = getWordHorizontal(played_tiles[0].GetComponent<Tile>().tileObject.location.Item1, played_tiles[0].GetComponent<Tile>().tileObject.location.Item2);
-
+					(int firstPlayedTileX, int firstPlayedTileY) = played_tiles[0].GetComponent<Tile>().getLocation();
+					while (firstPlayedTileY > 0 && Board[firstPlayedTileX, firstPlayedTileY-1].letter != ' ')
+					{
+						firstPlayedTileY--;
+					}
+					Debug.Log($"{firstPlayedTileX}, {firstPlayedTileY}");
+					playedWord = getWordHorizontal(firstPlayedTileX, firstPlayedTileY);
+					Debug.Log($"Played Word {playedWord}");
+					
 				}
 				else
 				{
 					played_tiles = played_tiles.OrderBy(t => t.GetComponent<Tile>().tileObject.location.Item1).ToList();
-					
-					playedWord = getWordVertical(played_tiles[0].GetComponent<Tile>().tileObject.location.Item1, played_tiles[0].GetComponent<Tile>().tileObject.location.Item2);
+					(int firstPlayedTileX, int firstPlayedTileY) = played_tiles[0].GetComponent<Tile>().getLocation();
+					while (firstPlayedTileX > 0 && Board[firstPlayedTileX-1, firstPlayedTileY].letter != ' ')
+					{
+						firstPlayedTileX--;
+					}
+					Debug.Log($"{firstPlayedTileX}, {firstPlayedTileY}");
+					playedWord = getWordVertical(firstPlayedTileX, firstPlayedTileY);
+					Debug.Log($"Played Word {playedWord}");
+
 				}
 				ScoreSystem.Instance.AddPlayerScore(ScoreWord(playedWord));
 			}
@@ -280,14 +300,9 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < word.Length; i++)
         {
             index = System.Array.IndexOf(tile_letters, word[i]);
-            if(tile_scores_int == 0)
-			{
-            	score += tile_scores[index];
-			}
-			else if(tile_scores_int == 1)
-			{
-				score += tile_scores_1s[index];
-			}
+            
+			score += tile_scores[index];
+			
         }
         return score;
     }
@@ -307,7 +322,6 @@ public class GameManager : MonoBehaviour
 
 	public void computerPlay()
 	{
-		bool solution = false;
 		for (int row = 0; row < 15; row++)
 		{
 			for (int col = 0; col < 15; col++)
