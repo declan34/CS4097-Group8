@@ -18,9 +18,11 @@ public class GameManager : MonoBehaviour
 	private int turnCount;
 	public static int[] tile_scores;
 
-	public static char[] tile_letters = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
-		'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-	public static int[] tile_scores_default = new int[] { 1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10 };
+	public static char[] tile_letters = new char[] { 'A', 'A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'E', 'F', 'F', 'F', 'G', 'G', 'G', 'H',
+        'H', 'H', 'I', 'I', 'I', 'J', 'J', 'K', 'K', 'K', 'L', 'L', 'L', 'M', 'M', 'M', 'N', 'N', 'N', 'O', 'O', 'O', 'P', 'P', 'P', 'Q', 'Q', 'R',
+        'R', 'S', 'S', 'T', 'T', 'T', 'U', 'U', 'V', 'V', 'W', 'W', 'X', 'X', 'Y', 'Y', 'Z', 'Z' };
+	public static int[] tile_scores_default = new int[] { 1, 1, 1, 3, 3, 3, 3, 2, 2, 1, 1, 1, 4, 4, 4, 2, 2, 2, 4, 4, 4, 1, 1, 1, 8, 8, 5, 5, 1, 1, 1, 1, 1, 3, 
+		3, 3, 1, 1, 1, 1, 1, 1, 3, 3, 10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 8, 8, 4, 4, 10, 10 };
 
 	private (int, int)[] TRIPLE_WORD_BONUS = new (int, int)[] {(0,0), (0,7), (0,14), (7,0), (7, 14), (14,0), (14, 7), (14,14)};
 	private (int, int)[] DOUBLE_WORD_BONUS = new (int, int)[] { (1, 1), (2, 2), (3, 3), (4, 4), (1, 13), (2, 12), (3, 11), (4, 10), (7, 7), (13, 1), (12, 2), (11, 3), (10, 4), (13, 13), (12, 12), (11, 11), (10, 10) };
@@ -28,7 +30,13 @@ public class GameManager : MonoBehaviour
 	private (int, int)[] DOUBLE_LETTER_BONUS = new (int, int)[] { (2, 6), (2, 8), (3, 7), (6, 2), (6, 6), (6, 8), (6, 12), (7, 3), (7, 11), (8, 2), (8, 6), (8, 8), (8, 12), (11, 7), (12, 6), (12, 8)};
 	private (int, int)[] ALL_BONUS;
 	
-	public static int[] tile_scores_1s = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+	public static int[] tile_scores_1s = new int[] {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	public static int[] tile_scores_max = new int[] {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 8, 8, 8, 8, 8, 3, 3, 3, 3, 3, 3, 3, 3, 
+		3, 3, 3, 3, 3, 3, 3, 30, 30, 3, 3, 3, 3, 3, 3, 3, 3, 3, 8, 8, 8, 8, 8, 8, 8, 8, 30, 30};
+	public static int[] tile_scores_random = new int[] {2, 2, 2, 3, 3, 1, 1, 3, 3, 2, 2, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 1, 1, 1, 8, 8, 5, 5, 5, 1, 1, 1, 3, 3, 3, 2, 
+		2, 2, 1, 1, 1, 3, 3, 3, 20, 20, 1, 1, 3, 3, 2, 2, 2, 1, 1, 8, 8, 8, 8, 8, 8, 4, 4, 20, 20};
+	
 
 	public static string[] Dictionary;
 
@@ -46,11 +54,15 @@ public class GameManager : MonoBehaviour
 		turnCount = 0;
 		Dictionary = File.ReadAllLines(".\\Assets\\dictionary.txt");
 		System.Random rng = new System.Random(); 
-		tile_scores_int = rng.Next(2);
+		tile_scores_int = rng.Next(4);
 		if (tile_scores_int == 0)
 			tile_scores = tile_scores_default;
 		else if (tile_scores_int == 1)
 			tile_scores = tile_scores_1s;
+		else if (tile_scores_int == 2)
+			tile_scores = tile_scores_max;
+		else if (tile_scores_int == 3)
+			tile_scores = tile_scores_random;
 
 		ALL_BONUS = TRIPLE_WORD_BONUS.Concat(DOUBLE_WORD_BONUS).ToArray().Concat(TRIPLE_LETTER_BONUS).ToArray().Concat(DOUBLE_LETTER_BONUS).ToArray();
 	}
@@ -88,7 +100,8 @@ public class GameManager : MonoBehaviour
 				bool verticalWord = true;
 				(List<GameObject>, string) playedWord;
 				List<int> score_mods = new List<int>();
-				for (int i = 0; i < tiles_on_rack.Count; i++)
+
+				for (int i = 6; i >= 0; i--)
 				{
 					if (tiles_on_rack[i].GetComponent<Tile>().tileObject.location != (-1, -1))
 					{
@@ -138,21 +151,11 @@ public class GameManager : MonoBehaviour
 				}
 				ScoreSystem.Instance.AddPlayerScore(ScoreWord(playedWord.Item1));
 			}
-			/*
-			Debug.Log("Tiles on Board:");
-            foreach(GameObject obj in tiles_on_board)
-			{
-				Debug.Log(obj.name);
-			}
-			*/
-
-			RefillRack();
-			turnCount++;
 		}
 		computerPlay();
 		turnCount++;
 
-        return;
+		return;
 	}
 
 	public bool ValidateBoard()
@@ -374,7 +377,6 @@ public class GameManager : MonoBehaviour
 
 	public void computerPlay()
 	{
-		bool solution = false;
 		for (int row = 0; row < 15; row++)
 		{
 			for (int col = 0; col < 15; col++)
