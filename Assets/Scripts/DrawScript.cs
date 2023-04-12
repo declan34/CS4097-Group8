@@ -71,6 +71,7 @@ public class DrawScript : MonoBehaviour
         //Debug.Log(bag[0].ToString());
         bag.RemoveAt(0);
         newtile.transform.SetParent(canvas.transform, true);
+        newtile.transform.SetSiblingIndex(9);
         newtile.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         ScoreSystem.Instance.subtractTiles(1);
         GameManager.Instance.tiles_on_rack.Insert(index, newtile);
@@ -134,7 +135,8 @@ public class DrawScript : MonoBehaviour
             GameObject newtile = Instantiate(tilePrefab, new Vector3(transform.position.x + 100, transform.position.y + 100, transform.position.z), Quaternion.identity);
             newtile.name = bag[0].ToString();
             newtile.transform.SetParent(canvas.transform, true);
-            newtile.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+			newtile.transform.SetSiblingIndex(9);
+			newtile.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
             bag.RemoveAt(0);
             ScoreSystem.Instance.subtractTiles(1);
             GameManager.Instance.computer_hand.Add(newtile);

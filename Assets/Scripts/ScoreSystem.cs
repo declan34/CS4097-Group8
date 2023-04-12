@@ -18,7 +18,11 @@ public class ScoreSystem : MonoBehaviour
     [SerializeField]
     public Text TimerText;
 
-    public int playerScore, computerScore, piecesLeft;
+    [SerializeField] private GameObject gameOverPanel;
+	[SerializeField] private GameObject gameOverPanel_background;
+
+
+	public int playerScore, computerScore, piecesLeft;
     public float TimeLeft;
     public bool TimerOn = false;
 
@@ -34,11 +38,14 @@ public class ScoreSystem : MonoBehaviour
         piecesLeft = 100;
         playerScore = 0;
         computerScore = 0;
-        TimeLeft = 600;
-    }
+        TimeLeft = 60;
 
-    // Update is called once per frame
-    void Update()
+        gameOverPanel.SetActive(false);
+		gameOverPanel_background.SetActive(false);
+	}
+
+	// Update is called once per frame
+	void Update()
     {
         if(TimerOn)
         {
@@ -52,7 +59,9 @@ public class ScoreSystem : MonoBehaviour
                 Debug.Log("Time is Up");
                 TimeLeft = 0;
                 TimerOn = false;
-            }
+				gameOverPanel.SetActive(true);
+				gameOverPanel_background.SetActive(true);
+			}
         }
         playerScoreText.text = "Player Score: " + playerScore.ToString();
 		computerScoreText.text = "Computer Score: " + computerScore.ToString();
