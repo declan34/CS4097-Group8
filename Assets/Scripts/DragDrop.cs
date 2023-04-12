@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
+public class DragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
 	[SerializeField] private Canvas canvas;
 	private static int rowIndex, columnIndex;
@@ -22,8 +22,8 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 	}
 	public void OnBeginDrag(PointerEventData eventData)
     {
-		Debug.Log("OnBeginDrag");
-		Debug.Log(tileScript.tileObject.locked);
+		//Debug.Log("OnBeginDrag");
+		//Debug.Log(tileScript.tileObject.locked);
 		if (!tileScript.tileObject.locked)
 		{
 			canvasGroup.alpha = 0.6f;
@@ -52,14 +52,8 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 	}
 	public void OnEndDrag(PointerEventData eventData)
 	{
-		Debug.Log("OnEndDrag");
+		//Debug.Log("OnEndDrag");
 		canvasGroup.alpha = 1f;
 		canvasGroup.blocksRaycasts = true;
-	}
-
-	public void OnPointerDown(PointerEventData eventData)
-    {
-        Debug.Log("OnPointerDown");
-		
 	}
 }

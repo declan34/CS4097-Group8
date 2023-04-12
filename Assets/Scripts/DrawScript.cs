@@ -37,6 +37,7 @@ public class DrawScript : MonoBehaviour
         }
         Shuffle(bag);
         DealTiles();
+        GameManager.Instance.computerPlay();
         return;
     }
 
@@ -67,7 +68,7 @@ public class DrawScript : MonoBehaviour
 
         GameObject newtile = Instantiate(tilePrefab, new Vector3(transform.position.x + xOffset, transform.position.y + yOffset, transform.position.z + zOffset), Quaternion.identity);
         newtile.name = bag[0].ToString();
-        Debug.Log(bag[0].ToString());
+        //Debug.Log(bag[0].ToString());
         bag.RemoveAt(0);
         newtile.transform.SetParent(canvas.transform, true);
         newtile.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);

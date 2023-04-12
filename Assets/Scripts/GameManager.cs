@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
 	public List<GameObject> tiles_on_rack;
 	public List<GameObject> computer_hand;
 	public int tile_scores_int;
-	private int turnCount;
+	public int turnCount;
 	public static int[] tile_scores;
 
 	public static char[] tile_letters = new char[] { 'A', 'A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'E', 'F', 'F', 'F', 'G', 'G', 'G', 'H',
@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
 	private (int, int)[] DOUBLE_WORD_BONUS = new (int, int)[] { (1, 1), (2, 2), (3, 3), (4, 4), (1, 13), (2, 12), (3, 11), (4, 10), (7, 7), (13, 1), (12, 2), (11, 3), (10, 4), (13, 13), (12, 12), (11, 11), (10, 10) };
 	private (int, int)[] TRIPLE_LETTER_BONUS = new (int, int)[] { (1, 5), (1, 9), (5, 1), (5, 5), (5, 9), (5, 13), (9, 1), (9, 5), (9, 9), (9, 13), (13, 5), (13, 9)};
 	private (int, int)[] DOUBLE_LETTER_BONUS = new (int, int)[] { (2, 6), (2, 8), (3, 7), (6, 2), (6, 6), (6, 8), (6, 12), (7, 3), (7, 11), (8, 2), (8, 6), (8, 8), (8, 12), (11, 7), (12, 6), (12, 8)};
-	private (int, int)[] ALL_BONUS;
 	
 	public static int[] tile_scores_1s = new int[] {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
@@ -64,12 +63,6 @@ public class GameManager : MonoBehaviour
 		else if (tile_scores_int == 3)
 			tile_scores = tile_scores_random;
 
-		ALL_BONUS = TRIPLE_WORD_BONUS.Concat(DOUBLE_WORD_BONUS).ToArray().Concat(TRIPLE_LETTER_BONUS).ToArray().Concat(DOUBLE_LETTER_BONUS).ToArray();
-	}
-
-	public void reset()
-	{
-		Board = new space[15, 15];
 	}
 
 	public void submit()
@@ -106,7 +99,6 @@ public class GameManager : MonoBehaviour
 					if (tiles_on_rack[i].GetComponent<Tile>().tileObject.location != (-1, -1))
 					{
 						played_tiles.Add(tiles_on_rack[i]);
-						DrawScript.Instance.FillRack(i);
 					}
 				}
 				
@@ -154,7 +146,7 @@ public class GameManager : MonoBehaviour
 			}
 		}
 		computerPlay();
-		turnCount++;
+		//turnCount++;
 
 		return;
 	}
@@ -175,7 +167,7 @@ public class GameManager : MonoBehaviour
                             Debug.Log(word + " is not a word");
                             return false;
 						}
-						Debug.Log("horizontal word: " + word);
+						//Debug.Log("horizontal word: " + word);
 					}
 
 					if( CheckVertical(row, col)) //if the word starts here vertically
@@ -186,7 +178,7 @@ public class GameManager : MonoBehaviour
 							Debug.Log(word + " is not a word");
                             return false;
                         }
-						Debug.Log("vertical word: " + word);
+						//Debug.Log("vertical word: " + word);
                     }
 				}
 			}
@@ -292,35 +284,6 @@ public class GameManager : MonoBehaviour
 		return (word, wordStr);
     }
 
-	/*
-	public int ScoreBoard()
-    { //to be used after board is validated, adds the values of all words together
-		int score = 0;
-        for (int row = 0; row < 15; row++)
-        {
-            for (int col = 0; col < 15; col++)
-            {
-                if (Board[row, col].letter != ' ') //if there is a letter at the position
-                {
-                    if (CheckHorizontal(row, col)) //check if word starts here horizontally
-                    {
-                        string word = getWordHorizontal(row, col);
-						score += ScoreWord(word);
-                    }
-
-                    if (CheckVertical(row, col)) //if the word starts here vertically
-                    {
-                        string word = getWordVertical(row, col);
-                        score += ScoreWord(word);
-                    }
-                }
-            }
-        }
-
-		return score;
-    }
-	*/ 
-
     public int ScoreWord(List<GameObject> word)
     {
         int score = 0;
@@ -330,7 +293,6 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < word.Count; i++)
         {
 			index = System.Array.IndexOf(tile_letters, word[i].name.ToCharArray()[0]);
-			Debug.Log($"{word[i].name} at index {index}");
 
 			if (!word[i].GetComponent<Tile>().tileObject.locked)
 			{
@@ -352,8 +314,10 @@ public class GameManager : MonoBehaviour
 					score += tile_scores[index];
 
 				word[i].GetComponent<Tile>().lockTile();
+				int tempInd = tiles_on_rack.IndexOf(word[i]);
 				tiles_on_board.Add(word[i]);
 				tiles_on_rack.Remove(word[i]);
+				DrawScript.Instance.FillRack(tempInd);
 			}
 			else
 			{
@@ -363,18 +327,6 @@ public class GameManager : MonoBehaviour
         return score*wordMod;
     }
 
-	public void RefillRack()
-	{
-		for(int i = 0; i < 7; i++)
-		{
-			//if ( /* tile_on_rack[i] is on the board */ )
-			//{
-				//tiles_on_rack[i].GetComponent<Tile>().lockTile(); //lock the tile
-				//DrawScript.Instance.FillRack(i); //fill the rack where the tile used to be
-			//}
-        }
-		return;
-    }
 
 	public void computerPlay()
 	{
@@ -420,7 +372,7 @@ public class GameManager : MonoBehaviour
                 }
 			}
 		}
-        Debug.Log("REDRAW");
+        Debug.Log("COMPUTER: REDRAW");
 		DrawScript.Instance.computerDraw();
 		return;
     }
