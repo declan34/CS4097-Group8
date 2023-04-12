@@ -7,15 +7,18 @@ using UnityEngine.UI;
 public class ScoreSystem : MonoBehaviour
 {
     [SerializeField]
-    public Text scoreText;
-    
-    [SerializeField]
+    public Text playerScoreText;
+
+	[SerializeField]
+	public Text computerScoreText;
+
+	[SerializeField]
     public Text piecesLeftText;
 
     [SerializeField]
     public Text TimerText;
 
-    public int score, piecesLeft;
+    public int playerScore, computerScore, piecesLeft;
     public float TimeLeft;
     public bool TimerOn = false;
 
@@ -29,7 +32,8 @@ public class ScoreSystem : MonoBehaviour
 
         TimerOn = true;
         piecesLeft = 100;
-        score = 0;
+        playerScore = 0;
+        computerScore = 0;
         TimeLeft = 600;
     }
 
@@ -50,8 +54,9 @@ public class ScoreSystem : MonoBehaviour
                 TimerOn = false;
             }
         }
-        scoreText.text = "Score: " + score.ToString();
-        piecesLeftText.text = "Pieces Left: " + piecesLeft.ToString();
+        playerScoreText.text = "Player Score: " + playerScore.ToString();
+		computerScoreText.text = "Computer Score: " + computerScore.ToString();
+		piecesLeftText.text = "Pieces Left: " + piecesLeft.ToString();
         
     }
     void updateTimer(float currentTime)
@@ -63,11 +68,15 @@ public class ScoreSystem : MonoBehaviour
     }
 
 
-    public void AddScore(int points)
+    public void AddPlayerScore(int points)
     {
-        score += points;
+        playerScore += points;
     }
-    public void subtractTiles(int drawtiles)
+	public void AddComputerScore(int points)
+	{
+		computerScore += points;
+	}
+	public void subtractTiles(int drawtiles)
     {
         piecesLeft = piecesLeft - drawtiles;
     }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviour
 {
@@ -62,8 +63,60 @@ public class GameManager : MonoBehaviour
 				Debug.Log("BOARD NOT VALID");
 				return;
 			}
-			int score = ScoreBoard();
-            ScoreSystem.Instance.AddScore(score);
+			else
+			{
+				List<GameObject> played_tiles = new List<GameObject>();
+				bool horizontalWord = true;
+				bool verticalWord = true;
+				string playedWord;
+				for (int i = 0; i < tiles_on_rack.Count; i++)
+				{
+					if (tiles_on_rack[i].GetComponent<Tile>().tileObject.location != (-1, -1))
+					{
+						played_tiles.Add(tiles_on_rack[i]);
+						tiles_on_rack[i].GetComponent<Tile>().lockTile();
+						tiles_on_board.Add(tiles_on_rack[i]);
+						tiles_on_rack.RemoveAt(i);
+						i--; // Because we removed an element, we need to subtract one from i
+					}
+				}
+				
+				// Played words should always be in a single row or column
+				for (int j = 0; j < played_tiles.Count - 1; j++)
+				{
+					(int currTileX, int currTileY) = played_tiles[j].GetComponent<Tile>().tileObject.location;
+					(int nextTileX, int nextTileY) = played_tiles[j + 1].GetComponent<Tile>().tileObject.location;
+
+					if (currTileX != nextTileX)
+						horizontalWord = false;
+					if (currTileY != nextTileY)
+						verticalWord = false;
+				}
+				if (!horizontalWord && !verticalWord)
+				{
+					Debug.Log("INVALID PLAY, Not all played tiles are in a line");
+					return;
+				}
+				else if (horizontalWord)
+				{
+					played_tiles = played_tiles.OrderBy(t => t.GetComponent<Tile>().tileObject.location.Item2).ToList();
+					playedWord = getWordHorizontal(played_tiles[0].GetComponent<Tile>().tileObject.location.Item1, played_tiles[0].GetComponent<Tile>().tileObject.location.Item2);
+				}
+				else
+				{
+					played_tiles = played_tiles.OrderBy(t => t.GetComponent<Tile>().tileObject.location.Item1).ToList();
+					playedWord = getWordVertical(played_tiles[0].GetComponent<Tile>().tileObject.location.Item1, played_tiles[0].GetComponent<Tile>().tileObject.location.Item2);
+				}
+				ScoreSystem.Instance.AddPlayerScore(ScoreWord(playedWord));
+			}
+			/*
+			Debug.Log("Tiles on Board:");
+            foreach(GameObject obj in tiles_on_board)
+			{
+				Debug.Log(obj.name);
+			}
+			*/
+
 			RefillRack();
 		}
         return;
@@ -164,15 +217,6 @@ public class GameManager : MonoBehaviour
         while (k < 15 && Board[k, col].letter != ' ') //while on the board and reading letters
         { //collects the word and locks the tiles
             word += Board[k, col].letter.ToString();
-			for (int i = 0; i < tiles_on_rack.Count; i++)
-			{
-				if (tiles_on_rack[i].GetComponent<Tile>().tileObject.location == (k, col))
-				{
-					tiles_on_rack[i].GetComponent<Tile>().lockTile();
-					tiles_on_board.Add(tiles_on_rack[i]);
-					tiles_on_rack.RemoveAt(i);
-				}
-			}
             k++;
         }
 		return word;
@@ -185,15 +229,6 @@ public class GameManager : MonoBehaviour
         while (k < 15 && Board[row, k].letter != ' ') //while on the board and reading letters
         { //collects the word
             word += Board[row, k].letter.ToString();
-			for (int i = 0; i < tiles_on_rack.Count; i++)
-			{
-				if (tiles_on_rack[i].GetComponent<Tile>().tileObject.location == (row, k))
-				{
-					tiles_on_rack[i].GetComponent<Tile>().lockTile();
-					tiles_on_board.Add(tiles_on_rack[i]);
-					tiles_on_rack.RemoveAt(i);
-				}
-			}
 			k++;
         }
 		return word;
