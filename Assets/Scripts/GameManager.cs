@@ -18,9 +18,11 @@ public class GameManager : MonoBehaviour
 	private int turnCount;
 	public static int[] tile_scores;
 
-	public static char[] tile_letters = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
-		'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-	public static int[] tile_scores_default = new int[] { 1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10 };
+	public static char[] tile_letters = new char[] { 'A', 'A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'E', 'F', 'F', 'F', 'G', 'G', 'G', 'H',
+        'H', 'H', 'I', 'I', 'I', 'J', 'J', 'K', 'K', 'K', 'L', 'L', 'L', 'M', 'M', 'M', 'N', 'N', 'N', 'O', 'O', 'O', 'P', 'P', 'P', 'Q', 'Q', 'R',
+        'R', 'S', 'S', 'T', 'T', 'T', 'U', 'U', 'V', 'V', 'W', 'W', 'X', 'X', 'Y', 'Y', 'Z', 'Z' };
+	public static int[] tile_scores_default = new int[] { 1, 1, 1, 3, 3, 3, 3, 2, 2, 1, 1, 1, 4, 4, 4, 2, 2, 2, 4, 4, 4, 1, 1, 1, 8, 8, 5, 5, 1, 1, 1, 1, 1, 3, 
+		3, 3, 1, 1, 1, 1, 1, 1, 3, 3, 10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 8, 8, 4, 4, 10, 10 };
 
 	private (int, int)[] TRIPLE_WORD_BONUS = new (int, int)[] {(0,0), (0,7), (0,14), (7,0), (7, 14), (14,0), (14, 7), (14,14)};
 	private (int, int)[] DOUBLE_WORD_BONUS = new (int, int)[] { (1, 1), (2, 2), (3, 3), (4, 4), (1, 13), (2, 12), (3, 11), (4, 10), (13, 1), (12, 2), (11, 3), (10, 4), (13, 13), (12, 12), (11, 11), (10, 10) };
@@ -94,15 +96,16 @@ public class GameManager : MonoBehaviour
 				bool verticalWord = true;
 				string playedWord;
 				List<int> score_mods = new List<int>();
-				for (int i = 0; i < tiles_on_rack.Count; i++)
+
+				for (int i = 6; i >= 0; i--)
 				{
 					if (tiles_on_rack[i].GetComponent<Tile>().tileObject.location != (-1, -1))
 					{
 						played_tiles.Add(tiles_on_rack[i]);
 						tiles_on_rack[i].GetComponent<Tile>().lockTile();
+						DrawScript.Instance.FillRack(i);
 						tiles_on_board.Add(tiles_on_rack[i]);
 						tiles_on_rack.RemoveAt(i);
-						i--; // Because we removed an element, we need to subtract one from i
 					}
 				}
 				
@@ -150,21 +153,11 @@ public class GameManager : MonoBehaviour
 				}
 				ScoreSystem.Instance.AddPlayerScore(ScoreWord(playedWord));
 			}
-			/*
-			Debug.Log("Tiles on Board:");
-            foreach(GameObject obj in tiles_on_board)
-			{
-				Debug.Log(obj.name);
-			}
-			*/
-
-			RefillRack();
-			turnCount++;
 		}
 		computerPlay();
 		turnCount++;
 
-        return;
+		return;
 	}
 
 	public bool ValidateBoard()
@@ -335,7 +328,6 @@ public class GameManager : MonoBehaviour
 
 	public void computerPlay()
 	{
-		bool solution = false;
 		for (int row = 0; row < 15; row++)
 		{
 			for (int col = 0; col < 15; col++)
