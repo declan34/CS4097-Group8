@@ -21271,10 +21271,7 @@ MonoBehaviour:
   tiles_on_board: []
   tiles_on_rack: []
   computer_hand: []
-<<<<<<< Updated upstream
-=======
   tile_scores_int: 0
->>>>>>> Stashed changes
 --- !u!4 &1824462937
 Transform:
   m_ObjectHideFlags: 0
