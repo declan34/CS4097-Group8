@@ -12,22 +12,43 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 
 	private RectTransform rectTransform;
 	private CanvasGroup canvasGroup;
+	private Tile tileScript;
 
 	private void Awake()
 	{
 		rectTransform = GetComponent<RectTransform>();
 		canvasGroup = GetComponent<CanvasGroup>();
+		tileScript = GetComponent<Tile>();
 	}
 	public void OnBeginDrag(PointerEventData eventData)
     {
 		Debug.Log("OnBeginDrag");
-		canvasGroup.alpha = 0.6f;
-		canvasGroup.blocksRaycasts = false;
+		Debug.Log(tileScript.tileObject.locked);
+		if (!tileScript.tileObject.locked)
+		{
+			canvasGroup.alpha = 0.6f;
+			canvasGroup.blocksRaycasts = false;
+
+			//Debug.Log(this.tileScript.tileObject.location);
+			if (tileScript.tileObject.location != (-1, -1))
+			{
+				(int x, int y) = this.tileScript.tileObject.location;
+				GameManager.Instance.Board[x, y].letter = ' ';
+				this.tileScript.changeLocation((-1, -1));
+			}
+		}
+		else
+		{
+			Debug.Log("This tile is locked in place");
+		}
 	}
 
 	public void OnDrag(PointerEventData eventData)
 	{
-		rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+		if (!tileScript.tileObject.locked)
+		{
+			rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+		}
 	}
 	public void OnEndDrag(PointerEventData eventData)
 	{
@@ -39,12 +60,6 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 	public void OnPointerDown(PointerEventData eventData)
     {
         Debug.Log("OnPointerDown");
-		Debug.Log(this.GetComponent<Tile>().tileObject.location);
-		if (this.GetComponent<Tile>().tileObject.location != (-1, -1))
-		{
-			(int x, int y) = this.GetComponent<Tile>().tileObject.location;
-			GameManager.Instance.Board[x, y].letter = ' ';
-			this.GetComponent<Tile>().changeLocation((-1, -1));
-		}
+		
 	}
 }

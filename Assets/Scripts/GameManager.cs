@@ -167,8 +167,17 @@ public class GameManager : MonoBehaviour
         int k = row;
         string word = "";
         while (k < 15 && Board[k, col].letter != ' ') //while on the board and reading letters
-        { //collects the word
+        { //collects the word and locks the tiles
             word += Board[k, col].letter.ToString();
+			for (int i = 0; i < tiles_on_rack.Count; i++)
+			{
+				if (tiles_on_rack[i].GetComponent<Tile>().tileObject.location == (k, col))
+				{
+					tiles_on_rack[i].GetComponent<Tile>().lockTile();
+					tiles_on_board.Add(tiles_on_rack[i]);
+					tiles_on_rack.RemoveAt(i);
+				}
+			}
             k++;
         }
 		return word;
@@ -181,7 +190,16 @@ public class GameManager : MonoBehaviour
         while (k < 15 && Board[row, k].letter != ' ') //while on the board and reading letters
         { //collects the word
             word += Board[row, k].letter.ToString();
-            k++;
+			for (int i = 0; i < tiles_on_rack.Count; i++)
+			{
+				if (tiles_on_rack[i].GetComponent<Tile>().tileObject.location == (row, k))
+				{
+					tiles_on_rack[i].GetComponent<Tile>().lockTile();
+					tiles_on_board.Add(tiles_on_rack[i]);
+					tiles_on_rack.RemoveAt(i);
+				}
+			}
+			k++;
         }
 		return word;
     }

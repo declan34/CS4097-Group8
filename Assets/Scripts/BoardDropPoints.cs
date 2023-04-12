@@ -21,7 +21,7 @@ public class BoardDropPoints : MonoBehaviour, IDropHandler
 		rowIndex = (int.Parse(waypointNum) - columnIndex) / 15;
 
 		Debug.Log("OnDrop");
-        if (eventData.pointerDrag != null)
+        if (eventData.pointerDrag != null && !eventData.pointerDrag.GetComponent<Tile>().tileObject.locked)
         {
             eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition = GetComponent<RectTransform>().anchoredPosition;
             
