@@ -14,13 +14,13 @@ public class GameManager : MonoBehaviour
 	public List<GameObject> tiles_on_board;
 	public List<GameObject> tiles_on_rack;
 	public List<GameObject> computer_hand;
-
+	public int tile_scores_int; 
 	private int turnCount;
 
 	public static char[] tile_letters = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
 		'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 	public static int[] tile_scores = new int[] { 1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10 };
-
+	public static int[] tile_scores_1s = new int[] {1, 1, 1, 1, 1 , 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 	public static string[] Dictionary;
 
 	private void Awake()
@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour
 		}
 		turnCount = 0;
 		Dictionary = File.ReadAllLines(".\\Assets\\dictionary.txt");
+		System.Random rng = new System.Random(); 
+		tile_scores_int = rng.Next(2);
 	}
 
 	public void reset()
@@ -273,7 +275,14 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < word.Length; i++)
         {
             index = System.Array.IndexOf(tile_letters, word[i]);
-            score += tile_scores[index];
+            if(tile_scores_int == 0)
+			{
+            	score += tile_scores[index];
+			}
+			else if(tile_scores_int == 1)
+			{
+				score += tile_scores_1s[index];
+			}
         }
         return score;
     }
