@@ -23,10 +23,4 @@ public class updateSprite : MonoBehaviour
 			imageComponent.sprite = tile_letter;
 		}
 	}
-
-    // Update is called once per frame
-    void Update()
-    {
-		
-    }
 }
