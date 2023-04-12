@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
 	public static int[] tile_scores_default = new int[] { 1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10 };
 
 	private (int, int)[] TRIPLE_WORD_BONUS = new (int, int)[] {(0,0), (0,7), (0,14), (7,0), (7, 14), (14,0), (14, 7), (14,14)};
-	private (int, int)[] DOUBLE_WORD_BONUS = new (int, int)[] { (1, 1), (2, 2), (3, 3), (4, 4), (1, 13), (2, 12), (3, 11), (4, 10), (13, 1), (12, 2), (11, 3), (10, 4), (13, 13), (12, 12), (11, 11), (10, 10) };
+	private (int, int)[] DOUBLE_WORD_BONUS = new (int, int)[] { (1, 1), (2, 2), (3, 3), (4, 4), (1, 13), (2, 12), (3, 11), (4, 10), (7, 7), (13, 1), (12, 2), (11, 3), (10, 4), (13, 13), (12, 12), (11, 11), (10, 10) };
 	private (int, int)[] TRIPLE_LETTER_BONUS = new (int, int)[] { (1, 5), (1, 9), (5, 1), (5, 5), (5, 9), (5, 13), (9, 1), (9, 5), (9, 9), (9, 13), (13, 5), (13, 9)};
 	private (int, int)[] DOUBLE_LETTER_BONUS = new (int, int)[] { (2, 6), (2, 8), (3, 7), (6, 2), (6, 6), (6, 8), (6, 12), (7, 3), (7, 11), (8, 2), (8, 6), (8, 8), (8, 12), (11, 7), (12, 6), (12, 8)};
 	private (int, int)[] ALL_BONUS;
@@ -86,17 +86,13 @@ public class GameManager : MonoBehaviour
 				List<GameObject> played_tiles = new List<GameObject>();
 				bool horizontalWord = true;
 				bool verticalWord = true;
-				string playedWord;
+				(List<GameObject>, string) playedWord;
 				List<int> score_mods = new List<int>();
 				for (int i = 0; i < tiles_on_rack.Count; i++)
 				{
 					if (tiles_on_rack[i].GetComponent<Tile>().tileObject.location != (-1, -1))
 					{
 						played_tiles.Add(tiles_on_rack[i]);
-						tiles_on_rack[i].GetComponent<Tile>().lockTile();
-						tiles_on_board.Add(tiles_on_rack[i]);
-						tiles_on_rack.RemoveAt(i);
-						i--; // Because we removed an element, we need to subtract one from i
 					}
 				}
 				
@@ -124,9 +120,8 @@ public class GameManager : MonoBehaviour
 					{
 						firstPlayedTileY--;
 					}
-					Debug.Log($"{firstPlayedTileX}, {firstPlayedTileY}");
 					playedWord = getWordHorizontal(firstPlayedTileX, firstPlayedTileY);
-					Debug.Log($"Played Word {playedWord}");
+					Debug.Log($"Played Word {playedWord.Item2}");
 					
 				}
 				else
@@ -137,12 +132,11 @@ public class GameManager : MonoBehaviour
 					{
 						firstPlayedTileX--;
 					}
-					Debug.Log($"{firstPlayedTileX}, {firstPlayedTileY}");
 					playedWord = getWordVertical(firstPlayedTileX, firstPlayedTileY);
-					Debug.Log($"Played Word {playedWord}");
+					Debug.Log($"Played Word {playedWord.Item2}");
 
 				}
-				ScoreSystem.Instance.AddPlayerScore(ScoreWord(playedWord));
+				ScoreSystem.Instance.AddPlayerScore(ScoreWord(playedWord.Item1));
 			}
 			/*
 			Debug.Log("Tiles on Board:");
@@ -171,7 +165,7 @@ public class GameManager : MonoBehaviour
 				{
 					if( CheckHorizontal(row, col) ) //check if word starts here horizontally
 					{
-						string word = getWordHorizontal(row, col);
+						string word = getWordHorizontal(row, col).Item2;
 						if (!Dictionary.Contains(word))
 						{ //checks word
                             Debug.Log(word + " is not a word");
@@ -182,7 +176,7 @@ public class GameManager : MonoBehaviour
 
 					if( CheckVertical(row, col)) //if the word starts here vertically
 					{
-                        string word = getWordVertical(row, col);
+                        string word = getWordVertical(row, col).Item2;
                         if (!Dictionary.Contains(word))
                         { //checks word
 							Debug.Log(word + " is not a word");
@@ -249,30 +243,52 @@ public class GameManager : MonoBehaviour
 		}
     }
 
-	public string getWordVertical(int row, int col)
+	public (List<GameObject>, string) getWordVertical(int row, int col)
 	{
-        int k = row;
-        string word = "";
-        while (k < 15 && Board[k, col].letter != ' ') //while on the board and reading letters
-        { //collects the word and locks the tiles
-            word += Board[k, col].letter.ToString();
-            k++;
-        }
-		return word;
-    }
+		int k = row;
+		List<GameObject> word = new List<GameObject>();
+		string wordStr = "";
 
-	public string getWordHorizontal(int row, int col)
+		GameObject tempTile;
+		while (k < 15 && Board[k, col].letter != ' ') //while on the board and reading letters
+		{ //collects the word
+			tempTile = tiles_on_rack.Where(i => i.GetComponent<Tile>().getLocation() == (k, col)).FirstOrDefault();
+			if (tempTile)
+				word.Add(tempTile);
+			else
+			{
+				tempTile = tiles_on_board.Where(i => i.GetComponent<Tile>().getLocation() == (k, col)).FirstOrDefault();
+				word.Add(tempTile);
+			}
+			wordStr += Board[k, col].letter.ToString();
+			k++;
+		}
+		return (word, wordStr);
+	}
+
+	public (List<GameObject>, string) getWordHorizontal(int row, int col)
 	{
         int k = col;
-        string word = "";
+        List<GameObject> word = new List<GameObject>();
+		string wordStr = "";
+		GameObject tempTile;
         while (k < 15 && Board[row, k].letter != ' ') //while on the board and reading letters
         { //collects the word
-            word += Board[row, k].letter.ToString();
+			tempTile = tiles_on_rack.Where(i => i.GetComponent<Tile>().getLocation() == (row, k)).FirstOrDefault();
+			if (tempTile)
+				word.Add(tempTile);
+			else
+			{ 
+				tempTile = tiles_on_board.Where(i => i.GetComponent<Tile>().getLocation() == (row, k)).FirstOrDefault();
+				word.Add(tempTile);			
+			}
+			wordStr += Board[row, k].letter.ToString();
 			k++;
         }
-		return word;
+		return (word, wordStr);
     }
 
+	/*
 	public int ScoreBoard()
     { //to be used after board is validated, adds the values of all words together
 		int score = 0;
@@ -299,19 +315,48 @@ public class GameManager : MonoBehaviour
 
 		return score;
     }
+	*/ 
 
-    public int ScoreWord(string word)
+    public int ScoreWord(List<GameObject> word)
     {
         int score = 0;
         int index;
-        for (int i = 0; i < word.Length; i++)
+		int wordMod = 1;
+		// First things first, check for double or triple bonus
+        for (int i = 0; i < word.Count; i++)
         {
-            index = System.Array.IndexOf(tile_letters, word[i]);
-            
-			score += tile_scores[index];
-			
+			index = System.Array.IndexOf(tile_letters, word[i].name.ToCharArray()[0]);
+			Debug.Log($"{word[i].name} at index {index}");
+
+			if (!word[i].GetComponent<Tile>().tileObject.locked)
+			{
+				if (TRIPLE_WORD_BONUS.Contains(word[i].GetComponent<Tile>().getLocation()))
+				{
+					wordMod *= 3;
+					score += tile_scores[index];
+				}
+				else if (DOUBLE_WORD_BONUS.Contains(word[i].GetComponent<Tile>().getLocation()))
+				{ 
+					wordMod *= 2;
+					score += tile_scores[index];
+				}
+				else if (TRIPLE_LETTER_BONUS.Contains(word[i].GetComponent<Tile>().getLocation()))
+					score += tile_scores[index] * 3;
+				else if (DOUBLE_LETTER_BONUS.Contains(word[i].GetComponent<Tile>().getLocation()))
+					score += tile_scores[index] * 2;
+				else
+					score += tile_scores[index];
+
+				word[i].GetComponent<Tile>().lockTile();
+				tiles_on_board.Add(word[i]);
+				tiles_on_rack.Remove(word[i]);
+			}
+			else
+			{
+				score += tile_scores[index];
+			}
         }
-        return score;
+        return score*wordMod;
     }
 
 	public void RefillRack()
@@ -396,10 +441,10 @@ public class GameManager : MonoBehaviour
 			{
 				k -= 1;
 			}
-			string word1 = getWordVertical(k, col);
+			string word1 = getWordVertical(k, col).Item2;
 
 			//get the letters below the space
-			string word2 = getWordVertical(row + 1, col);
+			string word2 = getWordVertical(row + 1, col).Item2;
 
 			//find a letter to connect the two "words" together
 			for (int i = 0; i < 7; i++)
@@ -425,7 +470,7 @@ public class GameManager : MonoBehaviour
 				{
 					k -= 1;
 				}
-				string word1 = getWordVertical(k, col);
+				string word1 = getWordVertical(k, col).Item2;
 
 				//find the possible word combinations added to the end of word1
 				List<List<GameObject>> permutations = Permute(computer_hand);
@@ -449,7 +494,7 @@ public class GameManager : MonoBehaviour
 			if (row + 1 < 15 && Board[row + 1, col].letter != ' ')
 			{
 				//get word below the space
-				string word2 = getWordVertical(row + 1, col);
+				string word2 = getWordVertical(row + 1, col).Item2;
 
                 //find the possible word combinations added to the begining of word2
                 List<List<GameObject>> permutations = Permute(computer_hand);
@@ -479,10 +524,10 @@ public class GameManager : MonoBehaviour
             {
                 k -= 1;
             }
-            string word1 = getWordHorizontal(row, k);
+            string word1 = getWordHorizontal(row, k).Item2;
 
             //get the letters right of the space
-            string word2 = getWordHorizontal(row, col + 1);
+            string word2 = getWordHorizontal(row, col + 1).Item2;
 
             //find a letter to connect the two "words" together
             for (int i = 0; i < 7; i++)
@@ -508,7 +553,7 @@ public class GameManager : MonoBehaviour
                 {
                     k -= 1;
                 }
-                string word1 = getWordHorizontal(row, k);
+                string word1 = getWordHorizontal(row, k).Item2;
 
                 //find the possible word combinations added to the end of word1
                 List<List<GameObject>> permutations = Permute(computer_hand);
@@ -532,7 +577,7 @@ public class GameManager : MonoBehaviour
 			if (col + 1 < 15 && Board[row, col + 1].letter != ' ')
 			{
                 //get word right of the space
-                string word2 = getWordHorizontal(row, col + 1);
+                string word2 = getWordHorizontal(row, col + 1).Item2;
 
                 //find the possible word combinations added to the begining of word2
                 List<List<GameObject>> permutations = Permute(computer_hand);
