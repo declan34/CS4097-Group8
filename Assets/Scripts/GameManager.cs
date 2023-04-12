@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 	public List<GameObject> tiles_on_board;
 	public List<GameObject> tiles_on_rack;
 	public List<GameObject> computer_hand;
-
+	public int tile_scores_int; 
 	private int turnCount;
 
 	public static char[] tile_letters = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
 	private (int, int)[] TRIPLE_LETTER_BONUS = new (int, int)[] { (1, 5), (1, 9), (5, 1), (5, 5), (5, 9), (5, 13), (9, 1), (9, 5), (9, 9), (9, 13), (13, 5), (13, 9)};
 	private (int, int)[] DOUBLE_LETTER_BONUS = new (int, int)[] { (2, 6), (2, 8), (3, 7), (6, 2), (6, 6), (6, 8), (6, 12), (7, 3), (7, 11), (8, 2), (8, 6), (8, 8), (8, 12), (11, 7), (12, 6), (12, 8)};
 	private (int, int)[] ALL_BONUS;
-
+	public static int[] tile_scores_1s = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 
 	public static string[] Dictionary;
 
@@ -43,6 +43,8 @@ public class GameManager : MonoBehaviour
 		}
 		turnCount = 0;
 		Dictionary = File.ReadAllLines(".\\Assets\\dictionary.txt");
+		System.Random rng = new System.Random(); 
+		tile_scores_int = rng.Next(2);
 
 		ALL_BONUS = TRIPLE_WORD_BONUS.Concat(DOUBLE_WORD_BONUS).ToArray().Concat(TRIPLE_LETTER_BONUS).ToArray().Concat(DOUBLE_LETTER_BONUS).ToArray();
 	}
@@ -285,7 +287,14 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < word.Length; i++)
         {
             index = System.Array.IndexOf(tile_letters, word[i]);
-            score += tile_scores[index];
+            if(tile_scores_int == 0)
+			{
+            	score += tile_scores[index];
+			}
+			else if(tile_scores_int == 1)
+			{
+				score += tile_scores_1s[index];
+			}
         }
         return score;
     }
