@@ -7,6 +7,8 @@ public class updateSprite : MonoBehaviour
 {
 	public Sprite[] tiles;
     public Sprite[] tiles_1s;
+    public Sprite[] tiles_max;
+    public Sprite[] tiles_random;
 	private Sprite tile_letter;
     private Image imageComponent;
 
@@ -24,6 +26,14 @@ public class updateSprite : MonoBehaviour
             else if(GameManager.Instance.tile_scores_int == 1)
             {
                 tile_letter = tiles_1s[index];
+            }
+            else if(GameManager.Instance.tile_scores_int == 2)
+            {
+                tile_letter = tiles_max[index];
+            }
+            else if(GameManager.Instance.tile_scores_int == 3)
+            {
+                tile_letter = tiles_random[index];
             }
 			imageComponent.sprite = tile_letter;
 		}
